@@ -37,3 +37,25 @@ Clike [here](https://discord.com/api/oauth2/authorize?client_id=1127962452005507
 ## Todo-list
 - `/` 커맨드 지원
 - 과도한 요청 지연 관리
+
+---
+
+## Getting start with poetry
+
+The project is managed by `poetry`, which let python runs on virtual environments seperately from global environment.
+
+To set a virtual environment for `poetry` **in your project**, issue below the commands.
+
+```bash
+# warning : this instructions are optional in case you want to run your virtual env in your project folder.
+# warning : this might change your personal poetry config.
+poetry config virtualenvs.in-project true
+poetry config virtualenvs.path "./.venv"
+poetry install && poetry update
+
+# and set python's interpreter to your virtual environment in your folder named `.venv` in your project.
+```
+
+```bash
+poetry install
+```
