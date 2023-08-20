@@ -5,8 +5,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-token = os.getenv("token_main")
-#token = os.getenv("token_test") #test
+# token = os.getenv("token_main")
+token = os.getenv("token_test") #test
 print(token)
 
 bot = commands.Bot(command_prefix='!',intents = discord.Intents.all())
@@ -31,10 +31,19 @@ def nodupRand(start, end, excluded_value):
     while num in excluded_value:
         num = randrange(start, end)
     return num
+def msgidSave(channel_id,author_id,message_id):
+    if not channel_id in msgid_list:
+        msgid_list[channel_id] = {author_id:message_id}
+    elif not author_id in msgid_list[channel_id]:
+        msgid_list[channel_id] = {author_id:message_id}
+    else:
+        msgid_list[channel_id][author_id] = message_id
+#msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
 
 presdt={};nzn={}
 prerandNum = (presdt,nzn)
-baseball_list = {} # id : [[ans1, ans2, ans3], strike, ball]
+baseball_list = {} # channel id : [[ans1, ans2, ans3], strike, ball]
+msgid_list = {} # user id : bot's last task(msg)
 
 @bot.event
 async def on_ready():
@@ -42,24 +51,43 @@ async def on_ready():
 
 @bot.command(name = "꼬맹")
 async def test1(ctx):
-    await ctx.channel.send("꼬맹눈")
+    msg = await ctx.channel.send("꼬맹눈")
+    msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     return None
 
 @bot.command(name = "꺼져")
 async def test2(ctx):
     i = random()
     if i<0.001:
-        await ctx.channel.send("느금")
+        msg = await ctx.channel.send("느금")
     elif i<0.005:
-        await ctx.channel.send("좆까")
+        msg = await ctx.channel.send("좆까")
     else:
-        await ctx.channel.send("힝힝ㅠㅠ")
+        msg = await ctx.channel.send("힝힝ㅠㅠ")
+    msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     return None
 
 @bot.command(name='힝힝ㅠㅠ')
 async def test3(ctx):
-    await ctx.channel.send("꺼져")
+    msg = await ctx.channel.send("꺼져")
+    msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     return None
+
+@bot.command(name = "삭제")
+async def delete_botmsg(ctx):
+    channel_id = ctx.channel.id
+    author_id = ctx.message.author.id
+    if (not channel_id in msgid_list) or (not author_id in msgid_list[channel_id]):
+        await ctx.channel.send(f"{ctx.message.author}의 삭제 명령을 수행할 수 없습니다.")
+        return None
+    if msgid_list[channel_id][author_id] == None:
+        await ctx.channel.send(f"{ctx.message.author}의 삭제 명령을 수행할 수 없습니다.")
+    else:
+        message = await ctx.channel.fetch_message(msgid_list[channel_id][author_id])
+        await message.delete()
+        msgid_list[channel_id][author_id] = None
+        await ctx.channel.send(f'{ctx.message.author}의 최근 명령을 삭제했습니다.')
+        return None
 
 @bot.command(name = "대통령") #prerandNum index : 0
 async def president(ctx,*args):
@@ -68,7 +96,8 @@ async def president(ctx,*args):
     imageCount = (5,4,15,6,5,10,6) #president image count
 
     if len(args)==0:
-        await ctx.channel.send('보고싶은 대통령을 함께 입력하세요')
+        msg = await ctx.channel.send('보고싶은 대통령을 함께 입력하세요')
+        msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     else:
         try:
             presdtNum = president.index(args[0])
@@ -82,7 +111,8 @@ async def president(ctx,*args):
             
             filename = imagehome + '/president/pre'+str(presdtNum)+' ('+str(randNum)+').jpg'
             file = discord.File(filename, spoiler=True)
-            await ctx.channel.send(file = file)
+            msg = await ctx.channel.send(file = file)
+            msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
         except ValueError:
             return None
 
@@ -102,7 +132,8 @@ async def nazuna(ctx):
         prerandNum[1][id] = [randNum]
     
     filename = imagehome + '/nazuna/nazuna (' + str(randNum) + ').jpg'  
-    await ctx.channel.send(file = discord.File(open(filename,'rb')))
+    msg = await ctx.channel.send(file = discord.File(open(filename,'rb')))
+    msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     print('{}, nazuna //'.format(id), randNum, ', {} images.'.format(imageCount))
     return None
 
