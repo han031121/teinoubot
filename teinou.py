@@ -5,8 +5,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-# token = os.getenv("token_main")
-token = os.getenv("token_test") #test
+token = os.getenv("token_main")
+# token = os.getenv("token_test") #test
 print(token)
 
 bot = commands.Bot(command_prefix='!',intents = discord.Intents.all())
