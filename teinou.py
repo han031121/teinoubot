@@ -30,14 +30,12 @@ def nodupRand(start, end, excluded_value):
     while num in excluded_value:
         num = randrange(start, end)
     return num
-def msgidSave(channel_id,author_id,message_id):
-    if not channel_id in msgid_list:
-        msgid_list[channel_id] = {author_id:message_id}
-    elif not author_id in msgid_list[channel_id]:
-        msgid_list[channel_id] = {author_id:message_id}
-    else:
+async def msgidSave(channel_id,author_id,message_id):
+    try:
         msgid_list[channel_id][author_id] = message_id
-#msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
+    except KeyError:
+        msgid_list[channel_id] = {author_id:message_id}
+#await msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
 
 presdt={};nzn={}
 prerandNum = (presdt,nzn)
@@ -51,7 +49,7 @@ async def on_ready():
 @bot.command(name = "꼬맹")
 async def test1(ctx):
     msg = await ctx.channel.send("꼬맹눈")
-    msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
+    await msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     return None
 
 @bot.command(name = "꺼져")
@@ -63,13 +61,13 @@ async def test2(ctx):
         msg = await ctx.channel.send("좆까")
     else:
         msg = await ctx.channel.send("힝힝ㅠㅠ")
-    msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
+    await msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     return None
 
 @bot.command(name='힝힝ㅠㅠ')
 async def test3(ctx):
     msg = await ctx.channel.send("꺼져")
-    msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
+    await msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     return None
 
 @bot.command(name = "삭제")
@@ -96,7 +94,7 @@ async def president(ctx,*args):
 
     if len(args)==0:
         msg = await ctx.channel.send('보고싶은 대통령을 함께 입력하세요')
-        msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
+        await msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     else:
         try:
             presdtNum = president.index(args[0])
@@ -111,7 +109,7 @@ async def president(ctx,*args):
             filename = imagehome + '/president/pre'+str(presdtNum)+' ('+str(randNum)+').jpg'
             file = discord.File(filename, spoiler=True)
             msg = await ctx.channel.send(file = file)
-            msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
+            await msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
         except ValueError:
             return None
 
@@ -132,7 +130,7 @@ async def nazuna(ctx):
     
     filename = imagehome + '/nazuna/nazuna (' + str(randNum) + ').jpg'  
     msg = await ctx.channel.send(file = discord.File(open(filename,'rb')))
-    msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
+    await msgidSave(ctx.channel.id,ctx.message.author.id,msg.id)
     print('{}, nazuna //'.format(id), randNum, ', {} images.'.format(imageCount))
     return None
 
