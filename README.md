@@ -59,3 +59,9 @@ poetry install && poetry update
 ```bash
 poetry install
 ```
+
+To run project as a bot,
+
+```bash
+poetry run python main.py
+```

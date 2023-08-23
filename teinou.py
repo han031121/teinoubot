@@ -9,8 +9,7 @@ token = os.getenv("token_main")
 #token = os.getenv("token_test") #test
 print(token)
 
-bot = commands.Bot(command_prefix='!',intents = discord.Intents.all())
-game = discord.Game("MapleStory")
+
 imagehome = './teinoubot_image' #image path
 
 def listDupCheck(list,num):
@@ -18,6 +17,7 @@ def listDupCheck(list,num):
         if list.count(i)>1:
             return True
     return False
+
 def BaseballCount(Ans,Inp,len,mode):
     count=0
     for i in range(0,len):
@@ -26,6 +26,7 @@ def BaseballCount(Ans,Inp,len,mode):
                 if (mode=='ball' and i!=j) or (mode=='strike' and i==j):
                     count+=1
     return count
+
 def nodupRand(start, end, excluded_value):
     num = randrange(start, end)
     while num in excluded_value:
@@ -101,13 +102,13 @@ async def nazuna(ctx):
         randNum = randrange(1,imageCount+1)
         prerandNum[1][id] = [randNum]
     
-    filename = imagehome + '/nazuna/nazuna (' + str(randNum) + ').jpg'  
+    filename = imagehome + '/nazuna/nazuna (' + str(randNum) + ').jpg'
     await ctx.channel.send(file = discord.File(open(filename,'rb')))
     print('{}, nazuna //'.format(id), randNum, ', {} images.'.format(imageCount))
     return None
 
 @bot.command(name = "야구")
-async def baseball(ctx,*args):  
+async def baseball(ctx,*args):
     if len(args)!=1:
         return None
     id = ctx.channel.id
@@ -147,4 +148,3 @@ async def baseball(ctx,*args):
         await ctx.channel.send("세자리 숫자를 입력하세요")
         return None
 
-bot.run(token)

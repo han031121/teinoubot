@@ -11,6 +11,8 @@ python = "^3.11"
 python-dotenv = "^1.0.0"
 discord-py = "^2.3.2"
 
+[tool.poetry.scripts]
+start = "src:main"
 
 [build-system]
 requires = ["poetry-core"]
