@@ -1,5 +1,5 @@
 import random
-from teinou.client import client
+from teinou import client
 
 @client.command(name="꺼져")
 async def reaction(ctx):
