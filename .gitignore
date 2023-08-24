@@ -1,1 +1,7 @@
 .env
+
+# poetry virtual environment
+.venv/
+
+# Python temporal bite code
+__pycache__/
