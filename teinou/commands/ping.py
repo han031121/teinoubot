@@ -15,6 +15,6 @@ async def reaction(ctx):
 async def reaction(ctx):
     return await ctx.channel.send("꼬맹통")
 
-@deletable_command(name="힝힝ㅜㅜ")
+@deletable_command(name="힝힝ㅠㅠ")
 async def reaction(ctx):
     return await ctx.channel.send("꺼져")
