@@ -1,3 +1,7 @@
+'''
+숫자 야구 기능
+'''
+
 from random import sample
 from teinou import client
 
