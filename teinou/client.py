@@ -1,3 +1,12 @@
+'''
+discord.py 
+
+디스코드 봇 클라이언트와 저능아 봇의 토큰을 연결해줍니다.
+.env 파일은 별도로 찾아야한다.
+
+discord.py 클라이언트 객체는 client 변수에 들어가있다.
+'''
+
 import os
 from dotenv import load_dotenv
 import discord
