@@ -3,7 +3,7 @@ from teinou.client import deletable_command
 presidentImageParser = {
     '박정희':ImageParser('president/parkdad', 1, True),
     '전두환':ImageParser('president/jeon', 1, True),
-    '노무현':ImageParser('president/no', 1, True),
+    '노무현':ImageParser('president/roh', 1, True),
     '이명박':ImageParser('president/lee', 1, True),
     '박근혜':ImageParser('president/parkdaughter', 1, True),
     '문재인':ImageParser('president/moon', 1, True),
