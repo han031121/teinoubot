@@ -6,7 +6,7 @@ object = ImageParser(path, noDupLimit, spoiler)
         ex. path = "nazuna" 일 경우, assets/nazuna/ 폴더 내 모든 파일을 대상으로 함.
     noDupLimit : 랜덤하게 이미지를 꺼낼 때, 중복이 안되게 하는 최소 텀을 지정합니다.
         ex. noDupLimit = 5 일 때, 특정 사진이 나오나서 최소, 그 다음 4장은 다른 이미지가 나옴.
-    spoiler : 이미지를 출력할 때 스포일러로 나오게 하는 여부를 정함.\
+    spoiler : 이미지를 출력할 때 스포일러로 나오게 하는 여부를 정함.
         ex. spoiler = true 이면 이미지 출력시 스포일러 상태로 출력됨.
 
 object.toggleSpoiler():
