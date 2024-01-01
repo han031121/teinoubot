@@ -15,7 +15,6 @@ with open(TEXT_PATH + "japankanji_list.txt","r",encoding='UTF8') as f_japankanji
     tmpList = f_japankanji.readlines()
     for i in range(len(tmpList)):
         jpkList.append(tmpList[i].split(",")) #{한글훈음},{일본한자},{음독},{훈독},{난이도}
-
     len_jpk = len(jpkList)
 
 @deletable_command(name = "일본단어")
