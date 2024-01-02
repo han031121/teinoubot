@@ -37,6 +37,16 @@ async def msgidSave(channel_id,author_id,message_id):
     except KeyError:
         msgid_list[channel_id] = {author_id:message_id}
 
+'''
+deletable_command
+
+@params : name = 커맨드 이름
+
+해당 함수의 리턴 값은 ctx.channel.send() 함수의 리턴 값이여야한다.
+또한, ctx.channel.send() 는 비동기 함수 이므로, 앞에 await을 붙여야한다.
+
+e.g. ) return await ctx.channel.send("test")
+'''
 def deletable_command(name= ...):
     print(name)
     def decorator(func):
