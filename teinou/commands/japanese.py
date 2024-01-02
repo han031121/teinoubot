@@ -2,10 +2,22 @@ from teinou.client import deletable_command
 from random import randrange
 
 TEXT_PATH = "assets/teinoubot_texts/"
-jpList = []
-jpkList = []
+jpList = []; jpkList = []
 len_jp = 0; len_jpk = 0; 
-jpkDiff = [2135,1895,1493,1109,512,0] #난이도가 구분되는 index
+jpkDiffindex = [2135,1895,1493,1109,512,0] #난이도가 구분되는 index
+jpkDiff = {
+    "20\n":"中学 (2급)",
+    "25\n":"中学 (준2급)",
+    "30\n":"中学 (3급)",
+    "40\n":"中学 (4급)",
+    "50\n":"小6 (5급)",
+    "60\n":"小5 (6급)",
+    "70\n":"小4 (7급)",
+    "80\n":"小3 (8급)",
+    "90\n":"小2 (9급)",
+    "100\n":"小1 (10급)",
+}
+
 with open(TEXT_PATH + "japanese_list.txt","r",encoding='UTF8') as f_japanese:
     tmpList = f_japanese.readlines()
     for i in range(len(tmpList)):
@@ -29,16 +41,21 @@ async def japanese(ctx,*args):
 
 @deletable_command(name = "일본한자")
 async def japankanji(ctx,*args):
+    index = 0
     if len(args) == 0:
         index = randrange(0,len_jpk)
     else:
-        try:
-            if len(args) == 1:
-                index = randrange(jpkDiff[int(args[0])],jpkDiff[int(args[0])-1])
-        except ValueError:
-            return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
-        except IndexError:
-            return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
+        if args[0].isdecimal():
+            try:
+                index = randrange(jpkDiffindex[int(args[0])],jpkDiffindex[int(args[0])-1])
+            except IndexError:
+                return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
+        else:
+            for i in range(len_jpk-1,-1,-1):
+                if jpkList[i][1] == args[0]:
+                    index = i
+            if index==0:
+                return await ctx.channel.send("해당 한자를 찾을 수 없습니다.")
 
-    string = "# " + jpkList[index][1] + "\n音 : " + jpkList[index][2] + "\n訓 : " + jpkList[index][3] + "\n韓 : " + jpkList[index][0]
+    string ="`" + jpkDiff[jpkList[index][4]] + "`" + "\n# " + jpkList[index][1] + "\n음 : " + jpkList[index][2] + "\n훈 : " + jpkList[index][3] + "\n韓 : " + jpkList[index][0]
     return await ctx.channel.send(string)
