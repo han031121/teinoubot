@@ -3,8 +3,13 @@
 해당 클라이언트(봇)을 실행합니다.
 '''
 
-from teinou import client, token, apply
+from teinou import client, apply
+from .client import get_token
 
 def main():
     apply(client)
-    client.run(token)
+    client.run(get_token("product"))
+
+def dev():
+    apply(client)
+    client.run(get_token("develop"))
