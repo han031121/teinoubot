@@ -1,5 +1,21 @@
 from teinou.client import deletable_command
 from random import randrange
+import re
+
+def iskanji(string):
+    kanji = r'[㐀-䶵一-鿋豈-頻]'
+    if re.fullmatch(kanji,string):
+        return True
+    return False
+def ishiragana(string):
+    hiragana = r'[ぁ-ゟ]'
+    strlist = re.findall(hiragana,string)
+    if len(string)!=len(strlist):
+            return False
+    for i in range(len(strlist)):
+        if string[i]!=strlist[i]:
+            return False
+    return True
 
 TEXT_PATH = "assets/teinoubot_texts/"
 jpList = []; jpkList = []
@@ -41,18 +57,18 @@ def makeKanjiSearch(list_sound,list_mean): #음독,훈독 검색결과 문자열
             return makeKanjiInfo(list_mean[0])
     else:
         string += "음독 검색결과 : "
-        for i in list_sound[0]:
+        for i in list_sound:
             string += jpkList[i][1] + " "
-        string += "훈독 검색결과 : "
-        for i in list_mean[1]:
+        string += "\n훈독 검색결과 : "
+        for i in list_mean:
             string += jpkList[i][1] + " "
         return string
 
-def searchHira(buf,context): #음독,훈독 검색
+def searchIndexlist(buf,context): #여러개의 index검색, list반환
     indexlist = []
-    for i in range(len_jpk):
+    for i in range(len_jpk-1,-1,-1):
         if buf in jpkList[i][context]:
-            indexlist[0].append(i)
+            indexlist.append(i)
     return indexlist
 
 @deletable_command(name = "일본단어")
@@ -76,13 +92,12 @@ async def japankanji(ctx,*args):
                 return await ctx.channel.send(makeKanjiInfo(index))
             except IndexError:
                 return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
-        else:
-        #elif iskanji:
+        elif iskanji(args[0]):
             for index in range(len_jpk-1,-1,-1):
                 if jpkList[index][1] == args[0]:
                     return await ctx.channel.send(makeKanjiInfo(index))
             return await ctx.channel.send("해당 한자를 찾을 수 없습니다.")
-        #elif ishiragana:
-        #    indexlist_sound = searchHira(args[0],2)
-        #    indexlist_mean = searchHira(args[0],3)
-        #    return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
+        elif ishiragana(args[0]):
+            indexlist_sound = searchIndexlist(args[0],2)
+            indexlist_mean = searchIndexlist(args[0],3)
+            return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
