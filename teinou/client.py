@@ -14,11 +14,24 @@ from discord.ext import commands
 
 load_dotenv()
 
-TOKEN_ATTR = os.getenv('TOKEN_ATTR')
-GAME_STATUS = os.getenv('GAME_STATUS')
-CMD_PREFIX = os.getenv('CMD_PREFIX')
+GAME_STATUS = "MapleStory"
+CMD_PREFIX = "!"
 
-token = os.getenv(TOKEN_ATTR)
+def get_token(token_mode:str):
+    if token_mode == "develop":
+        token =  os.getenv("TOKEN_DEV")
+        if type(token) == str:
+            return token
+        raise Exception('토큰 환경변수가 존재하지 않습니다. .env 파일 혹은 환경변수를 확인하세요. ')
+        
+    elif token_mode == "product":
+        token = os.getenv("TOKEN")
+        if type(token) == str:
+            return token
+        raise Exception('토큰 환경변수가 존재하지 않습니다. .env 파일 혹은 환경변수를 확인하세요. ')
+
+    raise Exception('토큰 호출 방식이 잘못 되었습니다. 방식 : "develop", "product" ')
+
 intents = discord.Intents.default()
 
 # 이것도 환경변수로 빼야함.
@@ -57,7 +70,6 @@ def deletable_command(name= ...):
                 await msgidSave(ctx.channel.id, ctx.message.author.id, msg.id)
             print(msgid_list)
     return decorator
-
 
 @client.event
 async def on_ready():
