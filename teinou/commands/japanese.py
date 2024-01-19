@@ -40,6 +40,8 @@ def makeKanjiSearch(list_sound,list_mean): #음독,훈독 검색결과 문자열
             return makeKanjiInfo(list_sound[0])
         else:
             return makeKanjiInfo(list_mean[0])
+    elif(len(list_sound) + len(list_mean) == 0):
+        return "검색된 한자가 없습니다."
     else:
         string += "음독 검색결과 : "
         for i in list_sound:
