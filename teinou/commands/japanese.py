@@ -1,21 +1,6 @@
 from teinou.client import deletable_command
 from random import randrange
-import re
-
-def iskanji(string):
-    kanji = r'[㐀-䶵一-鿋豈-頻]'
-    if re.fullmatch(kanji,string):
-        return True
-    return False
-def ishiragana(string):
-    hiragana = r'[ぁ-ゟ]'
-    strlist = re.findall(hiragana,string)
-    if len(string)!=len(strlist):
-            return False
-    for i in range(len(strlist)):
-        if string[i]!=strlist[i]:
-            return False
-    return True
+from teinou.jplibrary import *
 
 TEXT_PATH = "assets/teinoubot_texts/"
 jpList = []; jpkList = []
@@ -101,3 +86,11 @@ async def japankanji(ctx,*args):
             indexlist_sound = searchIndexlist(args[0],2)
             indexlist_mean = searchIndexlist(args[0],3)
             return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
+        elif args[0].isalpha():
+            indexlist_sound = searchIndexlist(engtohira(args[0]),2)
+            indexlist_mean = searchIndexlist(engtohira(args[0]),3)
+            return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
+        
+@deletable_command(name = "일본어")
+async def japankanji(ctx,*args):
+    return await ctx.channel.send(engtohira(args[0]))
