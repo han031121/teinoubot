@@ -29,8 +29,6 @@ def engtohira(string):
     op = 1 # option. 1 = hiragana, 2 = katakana
 
     while(len(string)>0):
-        print(string)
-        print(string[0])
         if (string[0]=='*'):
             if (len(string)==1):
                 break
