@@ -62,9 +62,11 @@ whe		ウェ
 who		ウォ
 thi		ティ
 thu		テュ
+tyu		テュ
 twu		トゥ
 dhi		ディ
 dhu		デュ
+dyu		デュ
 dwu		ドゥ
 ka	か	カ
 ki	き	キ
@@ -79,9 +81,9 @@ se	せ	セ
 so	そ	ソ
 ta	た	タ
 chi	ち	チ
-ti	ち	チ
+ti	ち	ティ
 tsu	つ	ツ
-tu	つ	ツ
+tu	つ	トゥ
 te	て	テ
 to	と	ト
 na	な	ナ
