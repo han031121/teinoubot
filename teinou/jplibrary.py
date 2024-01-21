@@ -22,6 +22,7 @@ def ishiragana(string):
     for i in range(len(strlist)):
         if string[i]!=strlist[i]:
             return False
+    print("this is hiragana")
     return True
 
 def engtohira(string):
