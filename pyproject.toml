@@ -12,7 +12,8 @@ python-dotenv = "^1.0.0"
 discord-py = "^2.3.2"
 
 [tool.poetry.scripts]
-start = "teinou.server:main"
+start = "teinou.cli:main"
+dev = "teinou.cli:dev"
 
 [build-system]
 requires = ["poetry-core"]
