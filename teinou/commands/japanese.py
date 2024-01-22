@@ -92,7 +92,6 @@ async def japankanji(ctx,*args):
         elif args[0].encode().isalpha(): #알파벳일 경우
             indexlist_sound = searchIndexlist(engtohira(args[0]),2)
             indexlist_mean = searchIndexlist(engtohira(args[0]),3)
-            print("this is alphabet")
             return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
         else:
             return await ctx.channel.send("올바르지 않은 입력입니다.")

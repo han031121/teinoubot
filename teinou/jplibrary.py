@@ -22,7 +22,6 @@ def ishiragana(string):
     for i in range(len(strlist)):
         if string[i]!=strlist[i]:
             return False
-    print("this is hiragana")
     return True
 
 def engtohira(string):
@@ -65,7 +64,6 @@ def engtohira(string):
                 string = string[len(enhira[i][0]):]
                 break
         if (len(string)==curlen):
-            print(string)
             return "올바르지 않은 입력입니다."
         
     return res
