@@ -72,26 +72,29 @@ async def japanese(ctx,*args):
 async def japankanji(ctx,*args):
     if len(args) == 0:
         index = randrange(0,len_jpk)
+        return await ctx.channel.send(makeKanjiInfo(index))
     else:
-        if args[0].isdecimal():
+        if args[0].isdecimal(): #숫자일 경우
             try:
                 index = randrange(jpkDiffindex[int(args[0])],jpkDiffindex[int(args[0])-1])
                 return await ctx.channel.send(makeKanjiInfo(index))
             except IndexError:
                 return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
-        elif iskanji(args[0]):
+        elif iskanji(args[0]): #한자일 경우
             for index in range(len_jpk-1,-1,-1):
                 if jpkList[index][1] == args[0]:
                     return await ctx.channel.send(makeKanjiInfo(index))
             return await ctx.channel.send("해당 한자를 찾을 수 없습니다.")
-        elif ishiragana(args[0]):
+        elif ishiragana(args[0]): #히라가나일 경우
             indexlist_sound = searchIndexlist(args[0],2)
             indexlist_mean = searchIndexlist(args[0],3)
             return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
-        elif args[0].isalpha():
+        elif args[0].encode().isalpha(): #알파벳일 경우
             indexlist_sound = searchIndexlist(engtohira(args[0]),2)
             indexlist_mean = searchIndexlist(engtohira(args[0]),3)
             return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
+        else:
+            return await ctx.channel.send("올바르지 않은 입력입니다.")
         
 @deletable_command(name = "일본어")
 async def japankanji(ctx,*args):

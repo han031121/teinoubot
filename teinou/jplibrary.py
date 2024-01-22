@@ -29,7 +29,7 @@ def engtohira(string):
     op = 1 # option. 1 = hiragana, 2 = katakana
 
     while(len(string)>0):
-        if (string[0]=='*'):
+        if (string[0]=='*'): #카타카나 변환
             if (len(string)==1):
                 break
             if (op == 1):
@@ -39,14 +39,23 @@ def engtohira(string):
             string = string[1:]
 
         curlen = len(string)
+
         if(len(string)>1):
-            if(string[0]==string[1] and string[0] in "kstp"):
+            if (string[0]==string[1] and (string[0] not in "nmaeiou")) or (string.find("tch")==0): #자음 중복으로 촉음 입력
                 if op==1:
                     res += "っ"
                 elif op==2:
                     res += "ッ"
                 string = string[1:]
                 continue
+            if (string[0]=='m' and string[1] in "bmp"): #m으로 ん입력
+                if op==1:
+                    res += "ん"
+                elif op==2:
+                    res += "ン"
+                string = string[1:]
+                continue
+        
         for i in range(len(enhira)):
             if(len(enhira[i][op])==0):
                 continue
