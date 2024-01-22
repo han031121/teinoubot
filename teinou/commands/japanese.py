@@ -72,6 +72,7 @@ async def japanese(ctx,*args):
 async def japankanji(ctx,*args):
     if len(args) == 0:
         index = randrange(0,len_jpk)
+        return await ctx.channel.send(makeKanjiInfo(index))
     else:
         if args[0].isdecimal(): #숫자일 경우
             try:
