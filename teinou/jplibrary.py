@@ -64,6 +64,6 @@ def engtohira(string):
                 string = string[len(enhira[i][0]):]
                 break
         if (len(string)==curlen):
-            return "올바르지 않은 입력입니다."
+            return -1
         
     return res
