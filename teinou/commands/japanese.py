@@ -90,18 +90,16 @@ async def japankanji(ctx,*args):
             indexlist_mean = searchIndexlist(args[0],3)
             return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
         elif args[0].encode().isalpha(): #알파벳일 경우
-            string = engtohira(args[0])
-            if string == -1:
+            if engtohira(args[0]) == -1:
                 return await ctx.channel.send("올바르지 않은 입력입니다.")
-            indexlist_sound = searchIndexlist(string,2)
-            indexlist_mean = searchIndexlist(string,3)
+            indexlist_sound = searchIndexlist(engtohira(args[0]),2)
+            indexlist_mean = searchIndexlist(engtohira(args[0]),3)
             return await ctx.channel.send(makeKanjiSearch(indexlist_sound,indexlist_mean))
         else:
             return await ctx.channel.send("올바르지 않은 입력입니다.")
         
 @deletable_command(name = "일본어")
 async def japankanji(ctx,*args):
-    string = engtohira(args[0])
-    if string==-1:
+    if engtohira(args[0])==-1:
         return await ctx.channel.send("올바르지 않은 입력입니다.")
     return await ctx.channel.send(engtohira(args[0]))
