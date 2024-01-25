@@ -30,6 +30,7 @@ def ishangeul(string):
     return True
 
 def engtohira(string):
+    string = string.lower()
     res = ""
     op = 1 # option. 1 = hiragana, 2 = katakana
     while(len(string)>0):
