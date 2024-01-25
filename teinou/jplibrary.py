@@ -11,23 +11,28 @@ with open(TEXT_PATH + "en_hiragana.txt","r",encoding='UTF8') as f_engtohira:
 def iskanji(string):
     kanji = r'[㐀-䶵一-鿋豈-頻]'
     if re.fullmatch(kanji,string):
+        print("this is kanji")
         return True
     return False
 
 def ishiragana(string):
     hiragana = r'[ぁ-ゟ]'
-    strlist = re.findall(hiragana,string)
-    if len(string)!=len(strlist):
+    for i in string:
+        if not re.fullmatch(hiragana,i):
             return False
-    for i in range(len(strlist)):
-        if string[i]!=strlist[i]:
+    return True
+
+def ishangeul(string):
+    hangeul = r'[가-힣]'
+    for i in string:
+        if not re.fullmatch(hangeul,i):
             return False
     return True
 
 def engtohira(string):
+    string = string.lower()
     res = ""
     op = 1 # option. 1 = hiragana, 2 = katakana
-
     while(len(string)>0):
         if (string[0]=='*'): #카타카나 변환
             if (len(string)==1):
@@ -37,9 +42,7 @@ def engtohira(string):
             else:
                 op = 1
             string = string[1:]
-
         curlen = len(string)
-
         if(len(string)>1):
             if (string[0]==string[1] and (string[0] not in "nmaeiou")) or (string.find("tch")==0): #자음 중복으로 촉음 입력
                 if op==1:
@@ -55,7 +58,6 @@ def engtohira(string):
                     res += "ン"
                 string = string[1:]
                 continue
-        
         for i in range(len(enhira)):
             if(len(enhira[i][op])==0):
                 continue

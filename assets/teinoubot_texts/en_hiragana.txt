@@ -40,34 +40,34 @@ byo	びょ	ビョ
 pya	ぴゃ	ピャ
 pyu	ぴゅ	ピュ
 pyo	ぴょ	ピョ
-va		ヴァ
-vi		ヴィ
-vu		ヴ
-ve		ヴェ
-vo		ヴォ
-tsa		ツァ
-tsi		ツィ
-tse		ツェ
-tso		ツォ
-fa		ファ
-fi		フィ
-fe		フェ
-fo		フォ
-ye		イェ
-she		シェ
-je		ジェ
-che		チェ
-whi		ウィ
-whe		ウェ
-who		ウォ
-thi		ティ
-thu		テュ
-tyu		テュ
-twu		トゥ
-dhi		ディ
-dhu		ドゥ
-dyu		デュ
-dwu		ドゥ
+va	ヴァ	ヴァ
+vi	ヴィ	ヴィ
+vu	ヴ	ヴ
+ve	ヴェ	ヴェ
+vo	ヴォ	ヴォ
+tsa	ツァ	ツァ
+tsi	ツィ	ツィ
+tse	ツェ	ツェ
+tso	ツォ	ツォ
+fa	ファ	ファ
+fi	フィ	フィ
+fe	フェ	フェ
+fo	フォ	フォ
+ye	イェ	イェ
+she	シェ	シェ
+je	ジェ	ジェ
+che	チェ	チェ
+whi	ウィ	ウィ
+whe	ウェ	ウェ
+who	ウォ	ウォ
+thi	ティ	ティ
+thu	テュ	テュ
+tyu	テュ	テュ
+twu	トゥ	トゥ
+dhi	ディ	ディ
+dhu	ドゥ	ドゥ
+dyu	デュ	デュ
+dwu	ドゥ	ドゥ
 ka	か	カ
 ki	き	キ
 ku	く	ク
@@ -111,8 +111,8 @@ ru	る	ル
 re	れ	レ
 ro	ろ	ロ
 wa	わ	ワ
-wi  ゐ  ヰ
-we  ゑ  ヱ
+wi	ゐ	ヰ		
+we	ゑ	ヱ		
 wo	を	ヲ
 ga	が	ガ
 gi	ぎ	ギ
