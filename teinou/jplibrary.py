@@ -11,7 +11,6 @@ with open(TEXT_PATH + "en_hiragana.txt","r",encoding='UTF8') as f_engtohira:
 def iskanji(string):
     kanji = r'[㐀-䶵一-鿋豈-頻]'
     if re.fullmatch(kanji,string):
-        print("this is kanji")
         return True
     return False
 
