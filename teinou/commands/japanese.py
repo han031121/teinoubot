@@ -58,26 +58,19 @@ def searchIndex(buf,context): #하나의 index검색, 반환
     return -1
 
 class KanjiSearchList(discord.ui.View):
-    def __init__(self, soundlist, meanlist, *, timeout: float | None = 180):
+    soundlist = [2,3,4,5]
+    meanlist = [2000,2001,2002,2003]
+    def __init__(self, soundlist_, meanlist_, *, timeout: float | None = 180):
         super().__init__(timeout=timeout)
-        self.soundlist = soundlist
-        self.meanlist = meanlist
-    @discord.ui.select(placeholder="음독 검색 결과", min_values = 1, max_values = 1, options = [])
-    async def soundlist_setopt(self, interaction, select:discord.ui.select):
-        for val in self.soundlist:
-            select.append_option(
-                discord.SelectOption(
-                label = jpkList[val][1])
-            )
+        soundlist = soundlist_
+        meanlist = meanlist_
+    option_sound = [discord.SelectOption(label = jpkList[i][1], description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) for i in soundlist]
+    option_mean = [discord.SelectOption(label = jpkList[i][1], description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) for i in meanlist]
+    #각각의 options에 SelectOption리스트 대입할 것
+    @discord.ui.select(placeholder="음독 검색 결과", min_values = 1, max_values = 1, options=option_sound)
     async def soundlist_callback(self, interaction, select:discord.ui.select):
         await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[0],1)))
-    @discord.ui.select(placeholder="훈독 검색 결과", min_values = 1, max_values = 1, options = [])
-    async def meanlist_setopt(self, interaction, select:discord.ui.select):
-        for val in self.meanlist:
-            select.append_option(
-                discord.SelectOption(
-                label = jpkList[val][1])
-            )
+    @discord.ui.select(placeholder="훈독 검색 결과", min_values = 1, max_values = 1, options = option_mean)
     async def meanlist_callback(self, interaction, select:discord.ui.select):
         await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[0],1)))
 
