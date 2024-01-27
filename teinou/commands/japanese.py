@@ -59,14 +59,15 @@ def searchIndex(buf,context): #하나의 index검색, 반환
 
 class KanjiSearchList(discord.ui.View):
     soundlist = [2,3,4,5]
-    meanlist = [2000,2001,2002,2003]
+    meanlist = [2000,2001,2002,2003] #임시값
     def __init__(self, soundlist_, meanlist_, *, timeout: float | None = 180):
         super().__init__(timeout=timeout)
         soundlist = soundlist_
         meanlist = meanlist_
     option_sound = [discord.SelectOption(label = jpkList[i][1], description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) for i in soundlist]
     option_mean = [discord.SelectOption(label = jpkList[i][1], description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) for i in meanlist]
-    #각각의 options에 SelectOption리스트 대입할 것
+    #option_sound, option_mean에 매개변수로 받은 soundlist_,meanlist_를 대입하고자 함
+    #option_sound, option_mean : select menu의 선택 가능한 옵션 리스트
     @discord.ui.select(placeholder="음독 검색 결과", min_values = 1, max_values = 1, options=option_sound)
     async def soundlist_callback(self, interaction, select:discord.ui.select):
         await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[0],1)))
