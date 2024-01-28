@@ -57,23 +57,35 @@ def searchIndex(buf,context): #하나의 index검색, 반환
             return i
     return -1
 
-class KanjiSearchList(discord.ui.View):
-    soundlist = [2,3,4,5]
-    meanlist = [2000,2001,2002,2003] #임시값
-    def __init__(self, soundlist_, meanlist_, *, timeout: float | None = 180):
-        super().__init__(timeout=timeout)
-        soundlist = soundlist_
-        meanlist = meanlist_
-    option_sound = [discord.SelectOption(label = jpkList[i][1], description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) for i in soundlist]
-    option_mean = [discord.SelectOption(label = jpkList[i][1], description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) for i in meanlist]
-    #option_sound, option_mean에 매개변수로 받은 soundlist_,meanlist_를 대입하고자 함
-    #option_sound, option_mean : select menu의 선택 가능한 옵션 리스트
-    @discord.ui.select(placeholder="음독 검색 결과", min_values = 1, max_values = 1, options=option_sound)
-    async def soundlist_callback(self, interaction, select:discord.ui.select):
-        await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[0],1)))
-    @discord.ui.select(placeholder="훈독 검색 결과", min_values = 1, max_values = 1, options = option_mean)
-    async def meanlist_callback(self, interaction, select:discord.ui.select):
-        await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[0],1)))
+def KanjiSelectmenu(indexlist_sound, indexlist_mean):
+    select_sound = discord.ui.Select(
+        placeholder = "음독 검색 결과",
+        min_values = 1,
+        max_values = 1,
+        options = [discord.SelectOption(label = jpkList[i][1],
+            description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
+            for i in indexlist_sound
+        ])
+    select_mean = discord.ui.Select(
+        placeholder = "훈독 검색 결과",
+        min_values = 1,
+        max_values = 1,
+        options = [discord.SelectOption(label = jpkList[i][1],
+            description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
+            for i in indexlist_mean
+        ])
+    async def callback_sound(interaction,select=select_sound):
+        if (len(select.values)>0):
+            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)))
+    async def callback_mean(interaction,select=select_mean):
+        if (len(select.values)>0):
+            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)))
+    select_sound.callback = callback_sound
+    select_mean.callback = callback_mean
+    view = discord.ui.View()
+    view.add_item(select_sound)
+    view.add_item(select_mean)
+    return view
 
 @deletable_command(name = "일본단어")
 async def japanese(ctx,*args):
@@ -107,7 +119,7 @@ async def japankanji(ctx,*args):
         elif ishangeul(args[0]): #한글일 경우
             return await ctx.channel.send("이건 한글입니다.")
         
-        else: #히라가나,영어일 경우
+        else: #히라가나,영어, 기타 올바르지 않은 입력일 경우
             if args[0].encode().isalpha():
                 string = engtohira(args[0])
                 if string == -1:
@@ -127,7 +139,7 @@ async def japankanji(ctx,*args):
             elif(len(indexlist_sound) + len(indexlist_mean) == 0):
                 return await ctx.channel.send("검색된 한자가 없습니다.")
             else:
-                return await ctx.channel.send("한자를 선택해주세요.", view = KanjiSearchList(indexlist_sound,indexlist_mean))
+                return await ctx.channel.send("한자를 선택해주세요.", view = KanjiSelectmenu(indexlist_sound,indexlist_mean))
         
 @deletable_command(name = "일본어")
 async def japankanji(ctx,*args):
