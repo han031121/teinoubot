@@ -57,23 +57,39 @@ def searchIndex(buf,context): #하나의 index검색, 반환
             return i
     return -1
 
+def emptySearchResult():
+    return discord.ui.Select(
+        placeholder = "검색 결과가 없음",
+        min_values = 1,
+        max_values = 1,
+        options = [discord.SelectOption(label = ".")],
+        disabled=True)
+
 def KanjiSelectmenu(indexlist_sound, indexlist_mean):
-    select_sound = discord.ui.Select(
-        placeholder = "음독 검색 결과",
-        min_values = 1,
-        max_values = 1,
-        options = [discord.SelectOption(label = jpkList[i][1],
+    option_sound = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
-            for i in indexlist_sound
-        ])
-    select_mean = discord.ui.Select(
-        placeholder = "훈독 검색 결과",
-        min_values = 1,
-        max_values = 1,
-        options = [discord.SelectOption(label = jpkList[i][1],
+            for i in indexlist_sound]
+    option_mean = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
-            for i in indexlist_mean
-        ])
+            for i in indexlist_mean]
+    
+    if len(option_sound)>0:
+        select_sound = discord.ui.Select(
+            placeholder = "음독 검색 결과",
+            min_values = 1,
+            max_values = 1,
+            options = option_sound)
+    else:
+        select_sound = emptySearchResult()
+    
+    if len(option_mean)>0:
+        select_mean = discord.ui.Select(
+            placeholder = "훈독 검색 결과",
+            min_values = 1,
+            max_values = 1,
+            options = option_mean)
+    else:
+        select_mean = emptySearchResult()
     async def callback_sound(interaction,select=select_sound):
         if (len(select.values)>0):
             await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)))
