@@ -21,50 +21,6 @@ class Buttons(discord.ui.View):
     async def sadButton(self,interaction:discord.Interaction,buttons:discord.ui.Button):
         await interaction.response.send_message(file = discord.File(open(dir + "sad.png", "rb")))
 
-class MyView(discord.ui.View):
-    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
-        placeholder = "Choose a Flavor!", # the placeholder text that will be displayed if nothing is selected
-        min_values = 1, # the minimum number of values that must be selected by the users
-        max_values = 1, # the maximum number of values that can be selected by the users
-        options = [ # the list of options from which users can choose, a required field
-            discord.SelectOption(
-                label="Vanilla",
-                description="Pick this if you like vanilla!"
-            ),
-            discord.SelectOption(
-                label="Chocolate",
-                description="Pick this if you like chocolate!"
-            ),
-            discord.SelectOption(
-                label="Strawberry",
-                description="Pick this if you like strawberry!"
-            )
-        ]
-    )
-    async def select_callback1(self, interaction, select): # the function called when the user is done selecting options
-        await interaction.response.send_message(f"Awesome! I like {select.values[0]} too!")
-    @discord.ui.select( # the decorator that lets you specify the properties of the select menu
-        placeholder = "Choose a Flavor2!", # the placeholder text that will be displayed if nothing is selected
-        min_values = 1, # the minimum number of values that must be selected by the users
-        max_values = 1, # the maximum number of values that can be selected by the users
-        options = [ # the list of options from which users can choose, a required field
-            discord.SelectOption(
-                label="Vanilla",
-                description="Pick this if you like vanilla!"
-            ),
-            discord.SelectOption(
-                label="Chocolate",
-                description="Pick this if you like chocolate!"
-            ),
-            discord.SelectOption(
-                label="Strawberry",
-                description="Pick this if you like strawberry!"
-            )
-        ]
-    )
-    async def select_callback2(self, interaction, select): # the function called when the user is done selecting options
-        await interaction.response.send_message(f"Awesome! I like {select.values[0]} too!")
-
 @deletable_command(name="꺼져")
 async def reaction(ctx):
         i = random.random()
@@ -81,6 +37,3 @@ async def reaction(ctx):
 @deletable_command(name="힝힝ㅠㅠ")
 async def reaction(ctx):
     return await ctx.channel.send("꺼져")
-@deletable_command(name = "flavor")
-async def reaction(ctx):
-    return await ctx.channel.send("select flavor",view = MyView())
