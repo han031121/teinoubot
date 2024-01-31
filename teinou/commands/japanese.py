@@ -2,6 +2,7 @@ from typing import Optional
 from teinou.client import deletable_command
 from random import randrange
 from teinou.jplibrary import *
+from math import ceil
 import discord
 
 TEXT_PATH = "assets/teinoubot_texts/"
@@ -69,20 +70,30 @@ def makeSelect(placeholder, options):
         max_values = 1,
         options = options)
 
-def KanjiSelectmenu(indexlist_sound, indexlist_mean):
+def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
+    page_sound = page_sound
+    page_mean = page_mean
+    totalpage_sound = ceil(len(indexlist_sound)/25)
+    totalpage_mean = ceil(len(indexlist_mean)/25)
+
+    if page_sound>totalpage_sound: page_sound = totalpage_sound
+    if page_mean>totalpage_mean: page_mean = totalpage_mean
+    if page_sound<1: page_sound = 1
+    if page_mean<1: page_mean = 1
+
     option_sound = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
-            for i in indexlist_sound]
+            for i in indexlist_sound[ slice((page_sound-1)*25,min([page_sound*25,len(indexlist_sound)])) ]]
     option_mean = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
-            for i in indexlist_mean]
-    
+            for i in indexlist_mean[ slice((page_mean-1)*25,min([page_mean*25,len(indexlist_mean)])) ]]
+
     if len(option_sound)>0:
-        select_sound = makeSelect("음독 검색 결과",option_sound)
+        select_sound = makeSelect("음독 검색 결과 ("+str(page_sound)+"/"+str(totalpage_sound)+")", option_sound)
     else:
         select_sound = emptySearchResult()
     if len(option_mean)>0:
-        select_mean = makeSelect("훈독 검색 결과",option_mean)
+        select_mean = makeSelect("훈독 검색 결과 ("+str(page_mean)+"/"+str(totalpage_mean)+")", option_mean)
     else:
         select_mean = emptySearchResult()
     prev_sound = discord.ui.Button(label="음독 이전",style=discord.ButtonStyle.blurple)
@@ -92,19 +103,25 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean):
 
     async def callback_sound(interaction,select=select_sound):
         if (len(select.values)>0):
-            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)))
+            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)), view = None)
     async def callback_mean(interaction,select=select_mean):
         if (len(select.values)>0):
-            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)))
+            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)), view = None)
     async def callback_next_sound(interaction):
-        await interaction.response.edit_message(view = KanjiSelectmenu([1988],indexlist_mean))
+        await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound+1,page_mean))
     async def callback_next_mean(interaction):
-        await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,[1988]))
+        await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound,page_mean+1))
+    async def callback_prev_sound(interaction):
+        await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound-1,page_mean))
+    async def callback_prev_mean(interaction):
+        await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound,page_mean-1))
 
     select_sound.callback = callback_sound
     select_mean.callback = callback_mean
     next_sound.callback = callback_next_sound
     next_mean.callback = callback_next_mean
+    prev_sound.callback = callback_prev_sound
+    prev_mean.callback = callback_prev_mean
 
     view = discord.ui.View()
     view.add_item(select_sound)
@@ -113,6 +130,7 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean):
     view.add_item(next_sound)
     view.add_item(prev_mean)
     view.add_item(next_mean)
+    
     return view
 
 @deletable_command(name = "일본단어")
@@ -167,7 +185,7 @@ async def japankanji(ctx,*args):
             elif(len(indexlist_sound) + len(indexlist_mean) == 0):
                 return await ctx.channel.send("검색된 한자가 없습니다.")
             else:
-                return await ctx.channel.send("한자를 선택해주세요.", view = KanjiSelectmenu(indexlist_sound,indexlist_mean))
+                return await ctx.channel.send("한자를 선택해주세요.", view = KanjiSelectmenu(indexlist_sound,indexlist_mean,1,1))
         
 @deletable_command(name = "일본어")
 async def japankanji(ctx,*args):
