@@ -9,24 +9,13 @@ with open(TEXT_PATH + "en_hiragana.txt","r",encoding='UTF8') as f_engtohira:
         enhira.append(tmpList[i].split('\t'))
 
 def iskanji(string):
-    kanji = r'[㐀-䶵一-鿋豈-頻]'
-    if re.fullmatch(kanji,string):
-        return True
-    return False
+    return re.fullmatch("^[㐀-䶵一-鿋豈-頻]+$",string)
 
 def ishiragana(string):
-    hiragana = r'[ぁ-ゟ]'
-    for i in string:
-        if not re.fullmatch(hiragana,i):
-            return False
-    return True
+    return re.fullmatch("^[ぁ-ゟ]+$",string)
 
 def ishangeul(string):
-    hangeul = r'[가-힣]'
-    for i in string:
-        if not re.fullmatch(hangeul,i):
-            return False
-    return True
+    return re.fullmatch("^[가-힣]+$",string)
 
 def engtohira(string):
     string = string.lower()
