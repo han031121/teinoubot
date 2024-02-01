@@ -75,13 +75,13 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     page_mean = page_mean
     totalpage_sound = ceil(len(indexlist_sound)/25)
     totalpage_mean = ceil(len(indexlist_mean)/25)
-    slicer_sound = slice((page_sound-1)*25,min([page_sound*25,len(indexlist_sound)]))
-    slicer_mean = slice((page_mean-1)*25,min([page_mean*25,len(indexlist_mean)]))
 
     if page_sound>totalpage_sound: page_sound = totalpage_sound
     if page_mean>totalpage_mean: page_mean = totalpage_mean
     if page_sound<1: page_sound = 1
     if page_mean<1: page_mean = 1
+    slicer_sound = slice((page_sound-1)*25,min([page_sound*25,len(indexlist_sound)]))
+    slicer_mean = slice((page_mean-1)*25,min([page_mean*25,len(indexlist_mean)]))
 
     option_sound = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
