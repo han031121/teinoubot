@@ -176,7 +176,7 @@ async def japankanji(ctx,*args):
             try:
                 index = randrange(jpkDiffindex[int(args[0])],jpkDiffindex[int(args[0])-1])
                 return await ctx.channel.send(makeKanjiInfo(index), view = KanjiRegen(int(args[0])))
-            except IndexError:
+            except:
                 return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
             
         elif iskanji(args[0]): #한자일 경우
