@@ -75,6 +75,8 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     page_mean = page_mean
     totalpage_sound = ceil(len(indexlist_sound)/25)
     totalpage_mean = ceil(len(indexlist_mean)/25)
+    slicer_sound = slice((page_sound-1)*25,min([page_sound*25,len(indexlist_sound)]))
+    slicer_mean = slice((page_mean-1)*25,min([page_mean*25,len(indexlist_mean)]))
 
     if page_sound>totalpage_sound: page_sound = totalpage_sound
     if page_mean>totalpage_mean: page_mean = totalpage_mean
@@ -83,10 +85,10 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
 
     option_sound = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
-            for i in indexlist_sound[ slice((page_sound-1)*25,min([page_sound*25,len(indexlist_sound)])) ]]
+            for i in indexlist_sound[slicer_sound]]
     option_mean = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
-            for i in indexlist_mean[ slice((page_mean-1)*25,min([page_mean*25,len(indexlist_mean)])) ]]
+            for i in indexlist_mean[slicer_mean]]
 
     if len(option_sound)>0:
         select_sound = makeSelect("음독 검색 결과 ("+str(page_sound)+"/"+str(totalpage_sound)+")", option_sound)
@@ -136,7 +138,6 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     prev_sound.callback = callback_prev_sound
     prev_mean.callback = callback_prev_mean
     reset.callback = callback_reset
-    
     return view
 
 def KanjiRegen(diff):
