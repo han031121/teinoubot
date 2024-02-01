@@ -75,6 +75,8 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     page_mean = page_mean
     totalpage_sound = ceil(len(indexlist_sound)/25)
     totalpage_mean = ceil(len(indexlist_mean)/25)
+    slicer_sound = slice((page_sound-1)*25,min([page_sound*25,len(indexlist_sound)]))
+    slicer_mean = slice((page_mean-1)*25,min([page_mean*25,len(indexlist_mean)]))
 
     if page_sound>totalpage_sound: page_sound = totalpage_sound
     if page_mean>totalpage_mean: page_mean = totalpage_mean
@@ -83,10 +85,10 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
 
     option_sound = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
-            for i in indexlist_sound[ slice((page_sound-1)*25,min([page_sound*25,len(indexlist_sound)])) ]]
+            for i in indexlist_sound[slicer_sound]]
     option_mean = [discord.SelectOption(label = jpkList[i][1],
             description=jpkList[i][2]+" / "+jpkList[i][3]+" / "+jpkList[i][0]) 
-            for i in indexlist_mean[ slice((page_mean-1)*25,min([page_mean*25,len(indexlist_mean)])) ]]
+            for i in indexlist_mean[slicer_mean]]
 
     if len(option_sound)>0:
         select_sound = makeSelect("음독 검색 결과 ("+str(page_sound)+"/"+str(totalpage_sound)+")", option_sound)
@@ -100,13 +102,26 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     next_sound = discord.ui.Button(label="음독 다음",style=discord.ButtonStyle.blurple)
     prev_mean = discord.ui.Button(label="훈독 이전",style=discord.ButtonStyle.green)
     next_mean = discord.ui.Button(label="훈독 다음",style=discord.ButtonStyle.green)
+    reset = discord.ui.Button(label="다시 선택",style=discord.ButtonStyle.gray)
 
+    view = discord.ui.View()
+    result_view = discord.ui.View()
+    view.add_item(select_sound)
+    view.add_item(select_mean)
+    view.add_item(prev_sound)
+    view.add_item(next_sound)
+    view.add_item(prev_mean)
+    view.add_item(next_mean)
+    result_view.add_item(reset)
+
+    async def callback_reset(interaction):
+        await interaction.response.edit_message(content = "한자를 선택해주세요.", view = KanjiSelectmenu(indexlist_sound,indexlist_mean,1,1))
     async def callback_sound(interaction,select=select_sound):
         if (len(select.values)>0):
-            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)), view = None)
+            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)), view = result_view)
     async def callback_mean(interaction,select=select_mean):
         if (len(select.values)>0):
-            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)), view = None)
+            await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)), view = result_view)
     async def callback_next_sound(interaction):
         await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound+1,page_mean))
     async def callback_next_mean(interaction):
@@ -122,15 +137,22 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     next_mean.callback = callback_next_mean
     prev_sound.callback = callback_prev_sound
     prev_mean.callback = callback_prev_mean
+    reset.callback = callback_reset
+    return view
 
+def KanjiRegen(diff):
     view = discord.ui.View()
-    view.add_item(select_sound)
-    view.add_item(select_mean)
-    view.add_item(prev_sound)
-    view.add_item(next_sound)
-    view.add_item(prev_mean)
-    view.add_item(next_mean)
-    
+    regenButton = discord.ui.Button(label="다시 생성", style=discord.ButtonStyle.gray)
+
+    async def regenButton_callback(interaction):
+        if diff!=0:
+            index = randrange(jpkDiffindex[diff],jpkDiffindex[diff-1])
+        else:
+            index = randrange(0,len_jpk)
+        await interaction.response.edit_message(content = makeKanjiInfo(index))
+    regenButton.callback = regenButton_callback
+
+    view.add_item(regenButton)
     return view
 
 @deletable_command(name = "일본단어")
@@ -147,12 +169,12 @@ async def japanese(ctx,*args):
 async def japankanji(ctx,*args):
     if len(args) == 0:
         index = randrange(0,len_jpk)
-        return await ctx.channel.send(makeKanjiInfo(index))
+        return await ctx.channel.send(makeKanjiInfo(index), view = KanjiRegen(0))
     else:
         if args[0].isdecimal(): #숫자일 경우
             try:
                 index = randrange(jpkDiffindex[int(args[0])],jpkDiffindex[int(args[0])-1])
-                return await ctx.channel.send(makeKanjiInfo(index))
+                return await ctx.channel.send(makeKanjiInfo(index), view = KanjiRegen(int(args[0])))
             except IndexError:
                 return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
             
