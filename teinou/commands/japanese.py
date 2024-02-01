@@ -115,7 +115,8 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     result_view.add_item(reset)
 
     async def callback_reset(interaction):
-        await interaction.response.edit_message(content = "한자를 선택해주세요.", view = KanjiSelectmenu(indexlist_sound,indexlist_mean,1,1))
+        await interaction.response.edit_message(content = "한자를 선택해주세요.", 
+                                                view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound,page_mean))
     async def callback_sound(interaction,select=select_sound):
         if (len(select.values)>0):
             await interaction.response.edit_message(content = makeKanjiInfo(searchIndex(select.values[-1],1)), view = result_view)
