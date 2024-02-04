@@ -1,4 +1,6 @@
 import re
+from PIL import ImageFont, ImageDraw, Image
+from os import path
 
 enhira = []
 TEXT_PATH = "assets/teinoubot_texts/"
@@ -7,6 +9,19 @@ with open(TEXT_PATH + "en_hiragana.txt","r",encoding='UTF8') as f_engtohira:
     tmpList = [line.rstrip('\n') for line in tmpList]
     for i in range(len(tmpList)):
         enhira.append(tmpList[i].split('\t'))
+
+def kanjiImage(string):
+    filename = f"assets/teinoubot_image/kanji/{string}.jpg"
+    if not path.isfile(filename):
+        width, height = (200,200)
+        image = Image.new('RGB', (width,height), (255,255,255))
+        font = ImageFont.truetype("assets/Kosugi-Regular.ttf", 160)
+        draw = ImageDraw.Draw(image)
+        w = draw.textlength(string, font=font)
+        draw.text(((width-w)/2, (height-w)/2), string, fill="black", font=font)
+        open(filename, "a")
+        image.save(filename)
+    return filename
 
 def iskanji(string):
     return re.fullmatch("^[㐀-䶵一-鿋豈-頻]+$",string)
