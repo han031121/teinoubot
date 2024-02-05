@@ -139,22 +139,6 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     prev_mean.callback = callback_prev_mean
     return view
 
-def KanjiRegen(diff):
-    view = discord.ui.View()
-    regenButton = discord.ui.Button(label="다시 생성", style=discord.ButtonStyle.gray)
-
-    async def regenButton_callback(interaction):
-        if diff!=0:
-            index = randrange(jpkDiffindex[diff],jpkDiffindex[diff-1])
-        else:
-            index = randrange(0,len_jpk)
-        await interaction.response.edit_message(file = makeKanjifile(index), 
-                                                embed = makeKanjiInfo(index))
-    regenButton.callback = regenButton_callback
-
-    view.add_item(regenButton)
-    return view
-
 @deletable_command(name = "일본단어")
 async def japanese(ctx,*args):
     return await ctx.channel.send("미구현 상태입니다.")
@@ -170,15 +154,13 @@ async def japankanji(ctx,*args):
     if len(args) == 0:
         index = randrange(0,len_jpk)
         return await ctx.channel.send(file = makeKanjifile(index), 
-                                      embed = makeKanjiInfo(index), 
-                                      view = KanjiRegen(0))
+                                      embed = makeKanjiInfo(index))
     else:
         if args[0].isdecimal(): #숫자일 경우
             try:
                 index = randrange(jpkDiffindex[int(args[0])],jpkDiffindex[int(args[0])-1])
                 return await ctx.channel.send(file = makeKanjifile(index), 
-                                              embed = makeKanjiInfo(index), 
-                                              view = KanjiRegen(int(args[0])))
+                                              embed = makeKanjiInfo(index))
             except:
                 return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
             
