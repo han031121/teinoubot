@@ -17,10 +17,9 @@ def kanjiImage(string):
     if not path.isfile(filename):
         width, height = (200,200)
         image = Image.new('RGB', (width,height), (255,255,255))
-        font = ImageFont.truetype("assets/Kosugi-Regular.ttf", 160)
+        font = ImageFont.truetype("assets/NotoSansJP-Regular.ttf", 160)
         draw = ImageDraw.Draw(image)
-        w = draw.textlength(string, font=font)
-        draw.text(((width-w)/2, (height-w)/2), string, fill="black", font=font)
+        draw.text((20, -20), string, fill="black", font=font)
         open(filename, "a")
         image.save(filename)
     return filename
