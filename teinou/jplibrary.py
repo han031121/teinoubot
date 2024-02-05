@@ -1,6 +1,6 @@
 import re
 from PIL import ImageFont, ImageDraw, Image
-from os import path
+from os import path, makedirs
 
 enhira = []
 TEXT_PATH = "assets/teinoubot_texts/"
@@ -11,7 +11,9 @@ with open(TEXT_PATH + "en_hiragana.txt","r",encoding='UTF8') as f_engtohira:
         enhira.append(tmpList[i].split('\t'))
 
 def kanjiImage(string):
-    filename = f"assets/teinoubot_image/kanji/{string}.jpg"
+    if not path.isdir("assets/teinoubot_image/.kanji"):
+        makedirs("assets/teinoubot_image/.kanji")
+    filename = f"assets/teinoubot_image/.kanji/{string}.jpg"
     if not path.isfile(filename):
         width, height = (200,200)
         image = Image.new('RGB', (width,height), (255,255,255))

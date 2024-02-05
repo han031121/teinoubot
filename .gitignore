@@ -1,4 +1,5 @@
 .env
+.kanji
 
 # poetry virtual environment
 .venv/

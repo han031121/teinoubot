@@ -33,24 +33,19 @@ with open(TEXT_PATH + "japankanji_list.txt","r",encoding='UTF8') as f_japankanji
         jpkList.append(tmpList[i].split(",")) #{한글훈음},{일본한자},{음독},{훈독},{난이도}
     len_jpk = len(jpkList)
 
-def makeKanjiInfo(index): #한자 하나에 대한 설명 문자열 반환
+def makeKanjifile(index):
+    return discord.File(kanjiImage(jpkList[index][1]), filename = "image.png")
+def makeKanjiInfo(index): #한자 하나에 대한 설명 embed 반환
     embed = discord.Embed(
-        description="# " + jpkList[index][1],
+        title="일본한자 - " + jpkList[index][1],
         color=discord.Color.fuchsia()
     )
-    embed.set_thumbnail(url="attachment://image.png")
+    embed.set_thumbnail(url=f"attachment://image.png")
     embed.add_field(name="음독",value=jpkList[index][2],inline=True)
-    embed.add_field(name="훈독",value=jpkList[index][3],inline=True)
-    embed.add_field(name="한국훈음",value=jpkList[index][0],inline=False)
-    return kanjiImage(jpkList[index][1])
-def makeKanjiSearch(indexlist_sound,indexlist_mean): #음독,훈독 검색결과 문자열 반환
-    if(len(indexlist_sound) + len(indexlist_mean) == 1):
-        if len(indexlist_sound) == 1:
-            return makeKanjiInfo(indexlist_sound[0])
-        else:
-            return makeKanjiInfo(indexlist_mean[0])
-    elif(len(indexlist_sound) + len(indexlist_mean) == 0):
-        return "검색된 한자가 없습니다."
+    embed.add_field(name="훈독",value=jpkList[index][3],inline=False)
+    embed.add_field(name="한국훈음",value=jpkList[index][0],inline=True)
+    embed.add_field(name="난이도",value=jpkDiff[jpkList[index][4]],inline=True)
+    return embed
 
 def searchIndexlist(buf,context): #여러개의 index검색, list반환
     indexlist = []
@@ -110,31 +105,23 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     next_sound = discord.ui.Button(label="음독 다음",style=discord.ButtonStyle.blurple)
     prev_mean = discord.ui.Button(label="훈독 이전",style=discord.ButtonStyle.green)
     next_mean = discord.ui.Button(label="훈독 다음",style=discord.ButtonStyle.green)
-    reset = discord.ui.Button(label="다시 선택",style=discord.ButtonStyle.gray)
 
     view = discord.ui.View()
-    result_view = discord.ui.View()
     view.add_item(select_sound)
     view.add_item(select_mean)
     view.add_item(prev_sound)
     view.add_item(next_sound)
     view.add_item(prev_mean)
     view.add_item(next_mean)
-    result_view.add_item(reset)
 
-    async def callback_reset(interaction):
-        await interaction.response.edit_message(content = "한자를 선택해주세요.", 
-                                                view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound,page_mean))
     async def callback_sound(interaction,select=select_sound):
         if (len(select.values)>0):
-            await interaction.response.edit_message(content = '',
-                                                    embed = makeKanjiInfo(searchIndex(select.values[-1],1)), 
-                                                    view = result_view)
+            await interaction.response.send_message(content = '', file = makeKanjifile(searchIndex(select.values[-1],1)),
+                                                    embed = makeKanjiInfo(searchIndex(select.values[-1],1)))
     async def callback_mean(interaction,select=select_mean):
         if (len(select.values)>0):
-            await interaction.response.edit_message(content = '', 
-                                                    embed = makeKanjiInfo(searchIndex(select.values[-1],1)), 
-                                                    view = result_view)
+            await interaction.response.send_message(content = '', file = makeKanjifile(searchIndex(select.values[-1],1)),
+                                                    embed = makeKanjiInfo(searchIndex(select.values[-1],1)))
     async def callback_next_sound(interaction):
         await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound+1,page_mean))
     async def callback_next_mean(interaction):
@@ -150,7 +137,6 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     next_mean.callback = callback_next_mean
     prev_sound.callback = callback_prev_sound
     prev_mean.callback = callback_prev_mean
-    reset.callback = callback_reset
     return view
 
 def KanjiRegen(diff):
@@ -162,7 +148,8 @@ def KanjiRegen(diff):
             index = randrange(jpkDiffindex[diff],jpkDiffindex[diff-1])
         else:
             index = randrange(0,len_jpk)
-        await interaction.response.edit_message(embed = makeKanjiInfo(index))
+        await interaction.response.edit_message(file = makeKanjifile(index), 
+                                                embed = makeKanjiInfo(index))
     regenButton.callback = regenButton_callback
 
     view.add_item(regenButton)
@@ -182,12 +169,16 @@ async def japanese(ctx,*args):
 async def japankanji(ctx,*args):
     if len(args) == 0:
         index = randrange(0,len_jpk)
-        return await ctx.channel.send(file = makeKanjiInfo(index), view = KanjiRegen(0))
+        return await ctx.channel.send(file = makeKanjifile(index), 
+                                      embed = makeKanjiInfo(index), 
+                                      view = KanjiRegen(0))
     else:
         if args[0].isdecimal(): #숫자일 경우
             try:
                 index = randrange(jpkDiffindex[int(args[0])],jpkDiffindex[int(args[0])-1])
-                return await ctx.channel.send(embed = makeKanjiInfo(index), view = KanjiRegen(int(args[0])))
+                return await ctx.channel.send(file = makeKanjifile(index), 
+                                              embed = makeKanjiInfo(index), 
+                                              view = KanjiRegen(int(args[0])))
             except:
                 return await ctx.channel.send("올바른 난이도값을 입력해주세요. (1~5)")
             
@@ -195,7 +186,8 @@ async def japankanji(ctx,*args):
             index = searchIndex(args[0],1)
             if index==-1:
                 return await ctx.channel.send("해당 한자를 찾을 수 없습니다.")
-            return await ctx.channel.send(embed = makeKanjiInfo(searchIndex(args[0],1)))
+            return await ctx.channel.send(file = makeKanjifile(index), 
+                                          embed = makeKanjiInfo(searchIndex(args[0],1)))
         
         elif ishangeul(args[0]): #한글일 경우
             return await ctx.channel.send("이건 한글입니다.")
@@ -214,14 +206,16 @@ async def japankanji(ctx,*args):
             indexlist_mean = searchIndexlist(string,3)
             if(len(indexlist_sound) + len(indexlist_mean) == 1):
                 if len(indexlist_sound) == 1:
-                    return await ctx.channel.send(makeKanjiInfo(indexlist_sound[0]))
+                    return await ctx.channel.send(file = makeKanjifile(indexlist_sound[0]), 
+                                                  embed = makeKanjiInfo(indexlist_sound[0]))
                 else:
-                    return await ctx.channel.send(makeKanjiInfo(indexlist_mean[0]))
+                    return await ctx.channel.send(file = makeKanjifile(indexlist_mean[0]), 
+                                                  embed = makeKanjiInfo(indexlist_mean[0]))
             elif(len(indexlist_sound) + len(indexlist_mean) == 0):
                 return await ctx.channel.send("검색된 한자가 없습니다.")
             else:
-                return await ctx.channel.send("한자를 선택해주세요.", view = KanjiSelectmenu(indexlist_sound,indexlist_mean,1,1))
-        
+                return await ctx.channel.send("한자를 선택해주세요.",view=KanjiSelectmenu(indexlist_sound,indexlist_mean,1,1))
+            
 @deletable_command(name = "일본어")
 async def japankanji(ctx,*args):
     if engtohira(args[0])==-1:
