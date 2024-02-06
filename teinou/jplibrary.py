@@ -1,4 +1,6 @@
 import re
+from PIL import ImageFont, ImageDraw, Image
+from os import path, makedirs
 
 enhira = []
 TEXT_PATH = "assets/teinoubot_texts/"
@@ -8,25 +10,28 @@ with open(TEXT_PATH + "en_hiragana.txt","r",encoding='UTF8') as f_engtohira:
     for i in range(len(tmpList)):
         enhira.append(tmpList[i].split('\t'))
 
+def kanjiImage(string):
+    if not path.isdir("assets/teinoubot_image/.kanji"):
+        makedirs("assets/teinoubot_image/.kanji")
+    filename = f"assets/teinoubot_image/.kanji/{string}.jpg"
+    if not path.isfile(filename):
+        width, height = (200,200)
+        image = Image.new('RGB', (width,height), (255,255,255))
+        font = ImageFont.truetype("assets/NotoSansJP-Regular.ttf", 160)
+        draw = ImageDraw.Draw(image)
+        draw.text((20, -25), string, fill="black", font=font)
+        open(filename, "a")
+        image.save(filename)
+    return filename
+
 def iskanji(string):
-    kanji = r'[㐀-䶵一-鿋豈-頻]'
-    if re.fullmatch(kanji,string):
-        return True
-    return False
+    return re.fullmatch("^[㐀-䶵一-鿋豈-頻]+$",string)
 
 def ishiragana(string):
-    hiragana = r'[ぁ-ゟ]'
-    for i in string:
-        if not re.fullmatch(hiragana,i):
-            return False
-    return True
+    return re.fullmatch("^[ぁ-ゟ]+$",string)
 
 def ishangeul(string):
-    hangeul = r'[가-힣]'
-    for i in string:
-        if not re.fullmatch(hangeul,i):
-            return False
-    return True
+    return re.fullmatch("^[가-힣]+$",string)
 
 def engtohira(string):
     string = string.lower()
