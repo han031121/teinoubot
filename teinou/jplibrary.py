@@ -19,7 +19,7 @@ def kanjiImage(string):
         image = Image.new('RGB', (width,height), (255,255,255))
         font = ImageFont.truetype("assets/NotoSansJP-Regular.ttf", 160)
         draw = ImageDraw.Draw(image)
-        draw.text((20, -20), string, fill="black", font=font)
+        draw.text((20, -25), string, fill="black", font=font)
         open(filename, "a")
         image.save(filename)
     return filename
