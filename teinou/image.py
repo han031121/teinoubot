@@ -48,5 +48,5 @@ class ImageParser:
             self.refreshDupList()
         
         item = self.path + self.dirList[self.noDupList.pop()]
-        return File(open(item, mode="rb"), spoiler=self.spoiler)
+        return File(fp=item, filename="image.png", spoiler=self.spoiler)
     

@@ -24,9 +24,7 @@ class Buttons(discord.ui.View):
 @deletable_command(name="꺼져")
 async def reaction(ctx):
         i = random.random()
-        if i <= 0.001:
-            return await ctx.channel.send("느금")
-        elif i <= 0.005:
+        if i <= 0.005:
             return await ctx.channel.send("좆까")
         return await ctx.channel.send("힝힝ㅠㅠ")
 
