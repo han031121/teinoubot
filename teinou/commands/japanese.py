@@ -101,10 +101,10 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
         select_mean = makeSelect("훈독 검색 결과 ("+str(page_mean)+"/"+str(totalpage_mean)+")", option_mean)
     else:
         select_mean = emptySearchResult()
-    prev_sound = discord.ui.Button(label="음독 이전",style=discord.ButtonStyle.blurple)
-    next_sound = discord.ui.Button(label="음독 다음",style=discord.ButtonStyle.blurple)
-    prev_mean = discord.ui.Button(label="훈독 이전",style=discord.ButtonStyle.green)
-    next_mean = discord.ui.Button(label="훈독 다음",style=discord.ButtonStyle.green)
+    prev_sound = discord.ui.Button(label="이전(음)",style=discord.ButtonStyle.blurple)
+    next_sound = discord.ui.Button(label="다음(음)",style=discord.ButtonStyle.blurple)
+    prev_mean = discord.ui.Button(label="이전(훈)",style=discord.ButtonStyle.green)
+    next_mean = discord.ui.Button(label="다음(훈)",style=discord.ButtonStyle.green)
     again = discord.ui.Button(label="다시 선택", style=discord.ButtonStyle.blurple)
 
     view = discord.ui.View()
