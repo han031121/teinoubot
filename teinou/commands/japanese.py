@@ -101,10 +101,11 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
         select_mean = makeSelect("훈독 검색 결과 ("+str(page_mean)+"/"+str(totalpage_mean)+")", option_mean)
     else:
         select_mean = emptySearchResult()
-    prev_sound = discord.ui.Button(label="음독 이전",style=discord.ButtonStyle.blurple)
-    next_sound = discord.ui.Button(label="음독 다음",style=discord.ButtonStyle.blurple)
-    prev_mean = discord.ui.Button(label="훈독 이전",style=discord.ButtonStyle.green)
-    next_mean = discord.ui.Button(label="훈독 다음",style=discord.ButtonStyle.green)
+    prev_sound = discord.ui.Button(label="이전(음)",style=discord.ButtonStyle.blurple)
+    next_sound = discord.ui.Button(label="다음(음)",style=discord.ButtonStyle.blurple)
+    prev_mean = discord.ui.Button(label="이전(훈)",style=discord.ButtonStyle.green)
+    next_mean = discord.ui.Button(label="다음(훈)",style=discord.ButtonStyle.green)
+    again = discord.ui.Button(label="다시 선택", style=discord.ButtonStyle.blurple)
 
     view = discord.ui.View()
     view.add_item(select_sound)
@@ -113,15 +114,19 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     view.add_item(next_sound)
     view.add_item(prev_mean)
     view.add_item(next_mean)
+    view_select = discord.ui.View()
+    view_select.add_item(again)
 
     async def callback_sound(interaction,select=select_sound):
         if (len(select.values)>0):
-            await interaction.response.send_message(content = '', file = makeKanjifile(searchIndex(select.values[-1],1)),
-                                                    embed = makeKanjiInfo(searchIndex(select.values[-1],1)))
+            await interaction.message.delete()
+            await interaction.channel.send(content = '', file = makeKanjifile(searchIndex(select.values[-1],1)),
+                                                    embed = makeKanjiInfo(searchIndex(select.values[-1],1)), view = view_select)
     async def callback_mean(interaction,select=select_mean):
         if (len(select.values)>0):
-            await interaction.response.send_message(content = '', file = makeKanjifile(searchIndex(select.values[-1],1)),
-                                                    embed = makeKanjiInfo(searchIndex(select.values[-1],1)))
+            await interaction.message.delete()
+            await interaction.channel.send(content = '', file = makeKanjifile(searchIndex(select.values[-1],1)),
+                                                    embed = makeKanjiInfo(searchIndex(select.values[-1],1)), view = view_select)
     async def callback_next_sound(interaction):
         await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound+1,page_mean))
     async def callback_next_mean(interaction):
@@ -130,6 +135,10 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
         await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound-1,page_mean))
     async def callback_prev_mean(interaction):
         await interaction.response.edit_message(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound,page_mean-1))
+    async def callback_again(interaction):
+        await interaction.message.delete()
+        await interaction.channel.send(view = KanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound,page_mean),
+                                       embed=discord.Embed(description="한자를 선택해주세요."))
 
     select_sound.callback = callback_sound
     select_mean.callback = callback_mean
@@ -137,6 +146,7 @@ def KanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     next_mean.callback = callback_next_mean
     prev_sound.callback = callback_prev_sound
     prev_mean.callback = callback_prev_mean
+    again.callback = callback_again
     return view
 
 def regenButton(diff):
@@ -145,7 +155,8 @@ def regenButton(diff):
     index = randrange(diff,len_jpk)
 
     async def callback(interaction):
-        await interaction.response.send_message(file = makeKanjifile(index),
+        await interaction.message.delete()
+        await interaction.channel.send(file = makeKanjifile(index),
                                                 embed = makeKanjiInfo(index),
                                                 view = regenButton(diff))
     button.callback = callback
