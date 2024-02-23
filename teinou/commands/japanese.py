@@ -1,5 +1,5 @@
 from typing import Optional
-from teinou.client import deletable_command
+from teinou.client import deletable_command, client
 from random import randrange
 from teinou.jplibrary import *
 from math import ceil
@@ -105,7 +105,6 @@ def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean)
     next_sound = discord.ui.Button(label="다음(음)",style=discord.ButtonStyle.blurple)
     prev_mean = discord.ui.Button(label="이전(훈)",style=discord.ButtonStyle.green)
     next_mean = discord.ui.Button(label="다음(훈)",style=discord.ButtonStyle.green)
-    again = discord.ui.Button(label="다시 선택", style=discord.ButtonStyle.blurple)
 
     view = discord.ui.View()
     view.add_item(select_sound)
@@ -115,17 +114,14 @@ def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean)
     view.add_item(prev_mean)
     view.add_item(next_mean)
     view_select = discord.ui.View()
-    view_select.add_item(again)
 
     async def callback_sound(interaction,select=select_sound):
         if (len(select.values)>0):
-            await interaction.message.delete()
-            await interaction.channel.send(content = '', file = file_kanjiImage(searchIndex(select.values[-1],1)),
+            await interaction.response.send_message(content = '', file = file_kanjiImage(searchIndex(select.values[-1],1)),
                                                     embed = embed_kanjiInfo(searchIndex(select.values[-1],1)), view = view_select)
     async def callback_mean(interaction,select=select_mean):
         if (len(select.values)>0):
-            await interaction.message.delete()
-            await interaction.channel.send(content = '', file = file_kanjiImage(searchIndex(select.values[-1],1)),
+            await interaction.response.send_message(content = '', file = file_kanjiImage(searchIndex(select.values[-1],1)),
                                                     embed = embed_kanjiInfo(searchIndex(select.values[-1],1)), view = view_select)
     async def callback_next_sound(interaction):
         await interaction.response.edit_message(view = view_kanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound+1,page_mean))
@@ -135,10 +131,6 @@ def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean)
         await interaction.response.edit_message(view = view_kanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound-1,page_mean))
     async def callback_prev_mean(interaction):
         await interaction.response.edit_message(view = view_kanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound,page_mean-1))
-    async def callback_again(interaction):
-        await interaction.message.delete()
-        await interaction.channel.send(view = view_kanjiSelectmenu(indexlist_sound,indexlist_mean,page_sound,page_mean),
-                                       embed=discord.Embed(description="한자를 선택해주세요."))
 
     select_sound.callback = callback_sound
     select_mean.callback = callback_mean
@@ -146,7 +138,6 @@ def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean)
     next_mean.callback = callback_next_mean
     prev_sound.callback = callback_prev_sound
     prev_mean.callback = callback_prev_mean
-    again.callback = callback_again
     return view
 
 def view_regenButton(diff):
@@ -163,70 +154,84 @@ def view_regenButton(diff):
     view.add_item(button)
     return view
 
+'''
 @deletable_command(name = "일본단어")
 async def japanese(ctx,*args):
-    return await ctx.channel.send(embed=discord.Embed(description="미구현 상태입니다."))
     index = randrange(0,len_jp)
     if len(jpList[index][1])>0:
         string = "# " + jpList[index][0] + " [" + jpList[index][1] + "]" + "\n뜻 : ||" + jpList[index][2] + "||"
     else:
         string = "# " + jpList[index][0] + "\n뜻 : ||" + jpList[index][2] + "||"
     return await ctx.channel.send(string)
+'''
 
-@deletable_command(name = "일본한자")
-async def japankanji(ctx,*args):
-    if len(args) == 0:
+@client.tree.command(name="일본한자", description="일본 한자 정보를 출력합니다")
+@discord.app_commands.describe(input="정보를 출력하고자 하는 한자를 직접 입력 또는 발음을 영어로 입력")
+async def japankanji(interaction:discord.Interaction, input:str):
+    if len(input) == 0:
         index = randrange(0,len_jpk)
-        return await ctx.channel.send(file = file_kanjiImage(index), 
+        return await interaction.response.send_message(file = file_kanjiImage(index), 
                                       embed = embed_kanjiInfo(index),
                                       view = view_regenButton(0))
     else:
-        if args[0].isdecimal(): #숫자일 경우
+        if input.isdecimal(): #숫자일 경우
             try:
-                index = randrange(jpkDiffindex[int(args[0])],jpkDiffindex[int(args[0])-1])
-                return await ctx.channel.send(file = file_kanjiImage(index), 
+                index = randrange(jpkDiffindex[int(input)],jpkDiffindex[int(input)-1])
+                return await interaction.response.send_message(file = file_kanjiImage(index), 
                                               embed = embed_kanjiInfo(index),
-                                              view = view_regenButton(int(args[0])))
+                                              view = view_regenButton(int(input)))
             except:
-                return await ctx.channel.send(embed=discord.Embed(description="올바른 난이도값을 입력해주세요. (1~5)"))
+                return await interaction.response.send_message(embed=discord.Embed(description="올바른 난이도값을 입력해주세요. (1~5)"),
+                                                               ephemeral=True)
             
-        elif iskanji(args[0]): #한자일 경우
-            index = searchIndex(args[0],1)
+        elif iskanji(input): #한자일 경우
+            index = searchIndex(input,1)
             if index==-1:
-                return await ctx.channel.send(embed=discord.Embed(description="해당 한자를 찾을 수 없습니다."))
-            return await ctx.channel.send(file = file_kanjiImage(index), 
-                                          embed = embed_kanjiInfo(searchIndex(args[0],1)))
+                return await interaction.response.send_message(embed=discord.Embed(description="해당 한자를 찾을 수 없습니다."),
+                                                               ephemeral=True)
+            return await interaction.response.send_message(file = file_kanjiImage(index), 
+                                                           embed = embed_kanjiInfo(searchIndex(input,1)))
         
-        elif ishangeul(args[0]): #한글일 경우
-            return await ctx.channel.send(embed=discord.Embed(description="이건 한글입니다."))
+        elif ishangeul(input): #한글일 경우
+            return await interaction.response.send_message(embed=discord.Embed(description="이건 한글입니다."),
+                                                           ephemeral=True)
         
         else: #히라가나,영어, 기타 올바르지 않은 입력일 경우
-            if args[0].encode().isalpha():
-                string = engtohira(args[0])
+            if input.encode().isalpha():
+                string = engtohira(input)
                 if string == -1:
-                    return await ctx.channel.send(embed=discord.Embed(description="올바르지 않은 입력입니다."))
-            elif ishiragana(args[0]):
-                string = args[0]
+                    return await interaction.response.send_message(embed=discord.Embed(description="올바르지 않은 입력입니다."),
+                                                                   ephemeral=True)
+            elif ishiragana(input):
+                string = input
             else:
-                return await ctx.channel.send(embed=discord.Embed(description="올바르지 않은 입력입니다."))
+                return await interaction.response.send_message(embed=discord.Embed(description="올바르지 않은 입력입니다."),
+                                                               ephemeral=True)
 
             indexlist_sound = searchIndexlist(string,2)
             indexlist_mean = searchIndexlist(string,3)
             if(len(indexlist_sound) + len(indexlist_mean) == 1):
                 if len(indexlist_sound) == 1:
-                    return await ctx.channel.send(file = file_kanjiImage(indexlist_sound[0]), 
+                    return await interaction.response.send_message(file = file_kanjiImage(indexlist_sound[0]), 
                                                   embed = embed_kanjiInfo(indexlist_sound[0]))
                 else:
-                    return await ctx.channel.send(file = file_kanjiImage(indexlist_mean[0]), 
+                    return await interaction.response.send_message(file = file_kanjiImage(indexlist_mean[0]), 
                                                   embed = embed_kanjiInfo(indexlist_mean[0]))
             elif(len(indexlist_sound) + len(indexlist_mean) == 0):
-                return await ctx.channel.send(embed=discord.Embed(description="검색된 한자가 없습니다."))
+                return await interaction.response.send_message(embed=discord.Embed(description="검색된 한자가 없습니다."),
+                                                               ephemeral=True)
             else:
-                return await ctx.channel.send(embed=discord.Embed(description="한자를 선택해주세요."),
-                                              view=view_kanjiSelectmenu(indexlist_sound,indexlist_mean,1,1))
+                return await interaction.response.send_message(embed=discord.Embed(title=f"검색 결과 - {input}",
+                                                                                   description="한자를 선택해주세요."),
+                                                            view=view_kanjiSelectmenu(indexlist_sound,indexlist_mean,1,1),
+                                                            ephemeral=True)
             
-@deletable_command(name = "일본어")
-async def japankanji(ctx,*args):
-    if engtohira(args[0])==-1:
-        return await ctx.channel.send(embed=discord.Embed(description="올바르지 않은 입력입니다."))
-    return await ctx.channel.send(engtohira(args[0]))
+@client.tree.command(name = "일본어", description="영어로 입력된 일본어 발음을 일본어로 출력합니다")
+@discord.app_commands.describe(input="일본어 발음을 영어로 입력")
+async def japankanji(interaction:discord.Interaction, input:str):
+    result = engtohira(input)
+    if result==-1:
+        return await interaction.response.send_message(embed=discord.Embed(description="올바르지 않은 입력입니다."),
+                                                       ephemeral=True)
+    return await interaction.response.send_message(embed=discord.Embed(title=f"일본어 - {input}",
+                                                                       description=result))

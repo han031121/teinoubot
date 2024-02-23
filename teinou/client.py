@@ -100,11 +100,13 @@ def slash_command(name:str, description:str, params_dsc={}):
 async def on_ready():
     await client.change_presence(status=Status.online, activity=game)
 
-@client.tree.command(name="맹꽁")
-async def mk(interaction:Interaction):
-    await interaction.response.send_message("맹꽁", ephemeral=True)
+@client.tree.command(name="맹통")
+@app_commands.describe(string='Enter something')
+async def mk(interaction:Interaction, string:str):
+    await interaction.response.send_message(f"こんにちは {string}", ephemeral=True)
 
 @client.command(name="sync_slashcommand")
 async def sync_slashcommand(ctx):
     synced = await client.tree.sync()
-    print(len(synced))
+    for s in synced:
+        print(s)
