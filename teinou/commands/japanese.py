@@ -1,4 +1,3 @@
-from typing import Optional
 from teinou.client import deletable_command, client
 from random import randrange
 from teinou.jplibrary import *
@@ -166,9 +165,9 @@ async def japanese(ctx,*args):
 '''
 
 @client.tree.command(name="일본한자", description="일본 한자 정보를 출력합니다")
-@discord.app_commands.describe(input="정보를 출력하고자 하는 한자를 직접 입력 또는 발음을 영어로 입력")
-async def japankanji(interaction:discord.Interaction, input:str):
-    if len(input) == 0:
+@discord.app_commands.describe(input="알고자 하는 한자를 직접 입력 / 발음을 영어로 입력")
+async def japankanji(interaction:discord.Interaction, input:str|None):
+    if input == None:
         index = randrange(0,len_jpk)
         return await interaction.response.send_message(file = file_kanjiImage(index), 
                                       embed = embed_kanjiInfo(index),

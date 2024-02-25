@@ -102,10 +102,10 @@ async def on_ready():
 
 @client.tree.command(name="맹통")
 @app_commands.describe(string='Enter something')
-async def mk(interaction:Interaction, string:str):
+async def mk(interaction:Interaction, string:str|None):
     await interaction.response.send_message(f"こんにちは {string}", ephemeral=True)
 
-@client.command(name="sync_slashcommand")
+@client.command(name="sync")
 async def sync_slashcommand(ctx):
     synced = await client.tree.sync()
     for s in synced:
