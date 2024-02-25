@@ -54,11 +54,6 @@ async def msgidSave(channel_id,author_id,message_id):
 async def on_ready():
     await client.change_presence(status=Status.online, activity=game)
 
-@client.tree.command(name="맹통")
-@app_commands.describe(string='Enter something')
-async def mk(interaction:Interaction, string:str|None):
-    await interaction.response.send_message(f"こんにちは {string}", ephemeral=True)
-
 @client.command(name="sync")
 async def sync_slashcommand(ctx):
     synced = await client.tree.sync()
