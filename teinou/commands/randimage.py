@@ -1,21 +1,22 @@
 from teinou import ImageParser
-from teinou.client import deletable_command
-import discord
+from teinou.client import client
+from discord import app_commands, Embed, Color, Interaction
+from discord.app_commands import Choice
 
-def getColor(r,g,b):
-    return discord.Color.from_rgb(r,g,b)
+embedColors = {
+    "nazuna":Color.from_rgb(163,142,137),
+    "ryo":Color.from_rgb(70,108,165)
+}
 
-def sendImage(ctx,name,color):
-    embed = discord.Embed(title=name, color=color)
-    file = ImageParser(name, 30).getRandomItem()
+@client.tree.command(name="이미지", description="어떤 그림을 출력합니다")
+@app_commands.describe(select="출력하고자 하는 것을 선택하세요")
+@app_commands.rename(select="캐릭터")
+@app_commands.choices(select=[
+    Choice(name="나즈나", value="nazuna"),
+    Choice(name="료",value="ryo")
+])
+async def randimage(interaction:Interaction, select:Choice[str]):
+    embed = Embed(title=select.name, color=embedColors[select.value])
+    file = ImageParser(select.value, 30).getRandomItem()
     embed.set_image(url=f"attachment://image.png")
-    return ctx.channel.send(file=file, embed=embed)
-
-@deletable_command(name="나즈나")
-async def nazuna(ctx):
-    return await sendImage(ctx,"nazuna",getColor(163,142,137))
-
-@deletable_command(name="료")
-async def ryo(ctx):
-    return await ctx.channel.send("미구현 상태입니다.")
-    return await sendImage(ctx,"ryo",getColor(70,108,165))
+    return await interaction.response.send_message(file=file, embed=embed)
