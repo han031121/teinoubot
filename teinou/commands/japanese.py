@@ -1,4 +1,4 @@
-from teinou.client import deletable_command, client
+from teinou.client import client
 from random import randrange
 from teinou.jplibrary import *
 from math import ceil
