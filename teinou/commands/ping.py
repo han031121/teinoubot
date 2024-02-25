@@ -1,7 +1,6 @@
 import random
 import os
-from teinou import client
-from teinou.client import deletable_command
+from teinou.client import client
 import discord
 
 dir = os.getcwd() + "/assets/teinoubot_image/kkomaeng/"
@@ -25,17 +24,17 @@ class Buttons(discord.ui.View):
         await interaction.channel.send(file = discord.File(open(dir + "sad.png", "rb")))
         await interaction.message.delete()
 
-@deletable_command(name="꺼져")
+@client.command(name="꺼져")
 async def reaction(ctx):
         i = random.random()
         if i <= 0.005:
             return await ctx.channel.send(embed=discord.Embed(description="좆까"))
         return await ctx.channel.send(embed=discord.Embed(description="힝힝ㅠㅠ"))
 
-@deletable_command(name="꼬맹")
+@client.command(name="꼬맹")
 async def reaction(ctx):
     return await ctx.channel.send(embed=discord.Embed(description="꼬맹통"),view = Buttons())
 
-@deletable_command(name="힝힝ㅠㅠ")
+@client.command(name="힝힝ㅠㅠ")
 async def reaction(ctx):
     return await ctx.channel.send(embed=discord.Embed(description="꺼져"))
