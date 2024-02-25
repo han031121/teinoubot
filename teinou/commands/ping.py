@@ -22,7 +22,7 @@ class Buttons(discord.ui.View):
     async def sadButton(self,interaction:Interaction,button:discord.ui.Button):
         await interaction.response.send_message(file = discord.File(open(dir + "sad.png", "rb")), ephemeral=True)
 
-@client.tree.command(name="말걸기")
+@client.tree.command(name="말걸기", description="저능아봇에게 말을 겁니다")
 @app_commands.describe(input="저능아봇에게 할 말을 골라주세요")
 @app_commands.rename(input="내용")
 @app_commands.choices(input=[
