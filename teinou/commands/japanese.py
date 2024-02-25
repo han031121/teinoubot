@@ -154,7 +154,7 @@ def view_regenButton(diff):
     return view
 
 '''
-@deletable_command(name = "일본단어")
+@client.command(name = "일본단어")
 async def japanese(ctx,*args):
     index = randrange(0,len_jp)
     if len(jpList[index][1])>0:
