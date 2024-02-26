@@ -16,7 +16,10 @@ embedColors = {
     Choice(name="료",value="ryo")
 ])
 async def randimage(interaction:Interaction, select:Choice[str]):
+    try:
+        file = ImageParser(select.value, 30).getRandomItem()
+    except:
+        return await interaction.response.send_message(embed=Embed(title=select.name, description="미구현 상태입니다."))
     embed = Embed(title=select.name, color=embedColors[select.value])
-    file = ImageParser(select.value, 30).getRandomItem()
     embed.set_image(url=f"attachment://image.png")
     return await interaction.response.send_message(file=file, embed=embed)
