@@ -23,13 +23,20 @@ def baseballCount(ans, input):
 
 def startButton():
     view = ui.View()
-    Button = ui.Button(label="시작",style=ButtonStyle.green)
-    async def callback(interaction:Interaction):
+    Button_3 = ui.Button(label="시작(3개)",style=ButtonStyle.green)
+    Button_4 = ui.Button(label="시작(4개)",style=ButtonStyle.green)
+    async def callback_3(interaction:Interaction):
         await interaction.response.send_message(embed=Embed(title="숫자야구 - 시작",
-                                                    description=f"{interaction.user}님이 숫자야구를 시작하였습니다.\n정답이 생성되었습니다."))
+                                                    description=f"{interaction.user}님이 숫자야구를 시작하였습니다.\n세 자리의 정답이 생성되었습니다."))
         answerDict[interaction.channel_id] = sample(range(0, 10), 3) #answer generate
-    Button.callback=callback
-    view.add_item(Button)
+    async def callback_4(interaction:Interaction):
+        await interaction.response.send_message(embed=Embed(title="숫자야구 - 시작",
+                                                    description=f"{interaction.user}님이 숫자야구를 시작하였습니다.\n네 자리의 정답이 생성되었습니다."))
+        answerDict[interaction.channel_id] = sample(range(0, 10), 4) #answer generate
+    Button_3.callback=callback_3
+    Button_4.callback=callback_4
+    view.add_item(Button_3)
+    view.add_item(Button_4)
     return view
 
 def endButton():
@@ -44,7 +51,7 @@ def endButton():
     return view
 
 @client.tree.command(name="숫자야구", description="숫자야구를 실행합니다")
-@app_commands.describe(input="세 자리 숫자를 입력해주세요. 이 값을 제공하지 않으면 숫자야구를 시작하거나 종료합니다.")
+@app_commands.describe(input="세 자리 혹은 네 자리 숫자를 입력해주세요. 이 값을 제공하지 않으면 숫자야구를 시작하거나 종료합니다.")
 @app_commands.rename(input="입력")
 async def baseball(interaction:Interaction, input:str|None):
     if (input==None):
@@ -60,12 +67,18 @@ async def baseball(interaction:Interaction, input:str|None):
         return await interaction.response.send_message(embed=Embed(title="숫자야구 - 오류", 
                                                                    description="아직 시작되지 않았습니다.\n명령어 실행 시 입력값을 제공하지 않으면 시작 또는 종료합니다."),
                                                         ephemeral=True)
-    elif (input.isdigit==False or len(input)!=3):
-        return await interaction.response.send_message(embed=Embed(title="숫자야구 - 오류", 
-                                                                   description="세 자리 숫자를 입력해주세요."),
-                                                        ephemeral=True)
     answer = answerDict[interaction.channel_id]
-    inputAns=[int(int(input)/100), int(int(input)%100/10), int(input)%10]
+    if (input.isdigit==False or len(input)!=len(answer)):
+        if(len(answer)==3):
+            return await interaction.response.send_message(embed=Embed(title="숫자야구 - 오류", 
+                                                                       description="세 자리 숫자를 입력해주세요."),ephemeral=True)
+        elif(len(answer)==4):
+            return await interaction.response.send_message(embed=Embed(title="숫자야구 - 오류", 
+                                                                       description="네 자리 숫자를 입력해주세요."),ephemeral=True)
+    if (len(answer)==3):
+        inputAns=[int(int(input)/100), int(int(input)%100/10), int(input)%10]
+    elif (len(answer)==4):
+        inputAns=[int(int(input)/1000), int(int(input)%1000/100), int(int(input)%100/10), int(input)%10]
     baseballList = baseballCount(answer, inputAns) #[ball,strike]
     inputAns_str = "".join(str(num) for num in inputAns)
 
