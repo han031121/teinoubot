@@ -16,6 +16,7 @@ load_dotenv()
 
 GAME_STATUS = "MapleStory"
 CMD_PREFIX = "!"
+AUTHOR_ID = os.getenv("AUTHOR_ID")
 
 def get_token(token_mode:str):
     if token_mode == "develop":
@@ -56,6 +57,8 @@ async def on_ready():
 
 @client.command(name="sync")
 async def sync_slashcommand(ctx):
-    synced = await client.tree.sync()
-    for s in synced:
-        print(s)
+    if(ctx.author.id == int(AUTHOR_ID)):
+        synced = await client.tree.sync()
+        for s in synced:
+            print(s)
+        return await ctx.channel.send("sync complete")
