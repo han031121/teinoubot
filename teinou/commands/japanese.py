@@ -1,6 +1,6 @@
 from teinou.client import client
 from random import randrange
-from teinou.jplibrary import *
+from teinou.kanjilibrary import *
 from math import ceil
 from discord import Interaction, ui, Embed, app_commands, File, SelectOption, ButtonStyle, Color
 from discord.app_commands import Choice
