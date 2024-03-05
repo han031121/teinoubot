@@ -59,14 +59,6 @@ def searchIndex(buf,context): #하나의 index검색, 반환
             return i
     return -1
 
-def select_empty():
-    return ui.Select(
-        placeholder = "검색 결과가 없음",
-        min_values = 1,
-        max_values = 1,
-        options = [SelectOption(label = ".")],
-        disabled=True)
-
 def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     page_sound = page_sound
     page_mean = page_mean
@@ -90,11 +82,11 @@ def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean)
     if len(option_sound)>0:
         select_sound = select_list("음독 검색 결과 ("+str(page_sound)+"/"+str(totalpage_sound)+")", option_sound)
     else:
-        select_sound = select_empty()
+        select_sound = select_list("음독 검색 결과 없음", [SelectOption(label = ".")], True)
     if len(option_mean)>0:
         select_mean = select_list("훈독 검색 결과 ("+str(page_mean)+"/"+str(totalpage_mean)+")", option_mean)
     else:
-        select_mean = select_empty()
+        select_mean = select_list("훈독 검색 결과 없음", [SelectOption(label = ".")], True)
     prev_sound = ui.Button(label="이전(음)",style=ButtonStyle.blurple)
     next_sound = ui.Button(label="다음(음)",style=ButtonStyle.blurple)
     prev_mean = ui.Button(label="이전(훈)",style=ButtonStyle.green)
