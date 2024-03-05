@@ -1,7 +1,6 @@
 from teinou.client import client
-from random import randrange
 from teinou.kanjilibrary import *
-from discord import Interaction, ui, Embed, app_commands, File, SelectOption, ButtonStyle, Color
+from discord import Interaction, ui, Embed, app_commands, File, SelectOption, Color
 TEXT_PATH = "assets/teinoubot_texts/"
 cncharList = []
 len_cnch = 0
@@ -71,7 +70,7 @@ def pinyinConvert(string, num):
                     break
 
     if(targetIndex==-1):
-        return ''
+        return string
     return string[:targetIndex] + pinyinList[string[targetIndex]][num] + string[targetIndex+1:]
 
 def view_cncharSelectmenu(resultList):
@@ -110,34 +109,41 @@ def view_cncharSelectmenu(resultList):
     select[2].callback = callback_3
     select[3].callback = callback_4
     select[4].callback = callback_none
-    
+
     for i in range(5):
         view.add_item(select[i])
     return view
 
-@client.command(name="중국한자")
-async def chinachar(ctx, args):
-    resultList = {}
-    for i in range(5):
-        pron = pinyinConvert(args,i)
-        resultList[pron] = []
-        for j in searchIndexlist(pron):
-            resultList[pron].append(j)
-    await ctx.channel.send(view = view_cncharSelectmenu(resultList))
-
 @client.tree.command(name="중국한자", description="검색을 통해 중국 한자 정보를 출력합니다")
-@app_commands.describe(input="알고자 하는 한자를 직접 입력 / 한어병음을 영어로 입력 (j,p,x 뒤에 오지 않는 ü는 yu로 입력)")
+@app_commands.describe(input="알고자 하는 한자를 직접 입력 / 한어병음을 영어로 입력 (ü는 yu로 입력)")
 @app_commands.rename(input="키워드")
 async def chinachar(interaction:Interaction, input:str):
     if input.encode().isalpha(): #알파벳일 경우
-        return None
-        #한어병음 색인, 모든 성조 결과 표시
+        resultList = {}
+        emptyConut = 0
+        for i in range(5):
+            pron = pinyinConvert(input,i)
+            resultList[pron] = []
+            for j in searchIndexlist(pron):
+                resultList[pron].append(j)
+            if (len(resultList[pron])==0):
+                 emptyConut+=1
+        if (emptyConut == 5):
+             return await interaction.response.send_message(embed=Embed(description="검색된 한자가 없습니다."),
+                                                            ephemeral=True)
+        return await interaction.response.send_message(embed=Embed(title=f"검색 결과 - {input}",description="한자를 선택해주세요."),
+                                                       view = view_cncharSelectmenu(resultList), 
+                                                       ephemeral=True)
     elif iskanji(input): #한자일 경우
-        return None
-        #한자 색인, 해당 한자 정보 표시
+        index = searchIndex(input)
+        if (index == -1):
+            return await interaction.response.send_message(embed=Embed(description="검색된 한자가 없습니다."),
+                                                            ephemeral=True)
+        return await interaction.response.send_message(file=file_cncharImage(searchIndex(input)),
+                                                        embed=embed_cncharInfo(searchIndex(input)))
     elif ishangeul(input): #한글일 경우
         return await interaction.response.send_message(embed=Embed(description="이건 한글입니다."),
                                                         ephemeral=True)
     else: #나머지 잘못된 입력
         return await interaction.response.send_message(embed=Embed(description="올바르지 않은 입력입니다."),
-                                                            ephemeral=True)
+                                                        ephemeral=True)
