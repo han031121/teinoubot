@@ -11,6 +11,7 @@ python = "^3.11"
 python-dotenv = "^1.0.0"
 discord-py = "^2.3.2"
 pillow = "^10.2.0"
+requests = "^2.31.0"
 
 [tool.poetry.scripts]
 start = "teinou.cli:main"
