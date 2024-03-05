@@ -1,5 +1,6 @@
 .env
 .kanji
+.cnchar
 
 # poetry virtual environment
 .venv/

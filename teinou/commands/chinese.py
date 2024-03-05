@@ -2,8 +2,6 @@ from teinou.client import client
 from random import randrange
 from teinou.kanjilibrary import *
 from discord import Interaction, ui, Embed, app_commands, File, SelectOption, ButtonStyle, Color
-from discord.app_commands import Choice
-
 TEXT_PATH = "assets/teinoubot_texts/"
 cncharList = []
 len_cnch = 0
@@ -14,12 +12,23 @@ with open(TEXT_PATH + "chinese_character_1.txt","r",encoding='UTF8') as f_chinac
         cncharList.append(tmpList[i].split("\t")) #{한자}\t{한어병음}
     len_cnch = len(cncharList)
 
+def file_cncharImage(index):
+    return File(cncharImage(cncharList[index][0]), filename = "image.png")
+def embed_cncharInfo(index): #한자 하나에 대한 설명 embed 반환
+    embed = Embed(
+        title="중국한자 - " + cncharList[index][0],
+        color=Color.red()
+    )
+    embed.set_thumbnail(url=f"attachment://image.png")
+    embed.add_field(name="한어병음",value=cncharList[index][1],inline=True)
+    #embed.add_field(name="뜻",value=cncharList[index][1],inline=True)
+    return embed
+
 def searchIndexlist(buf): #여러개의 index검색, list반환 (병음 검색 시)
     indexlist = []
     for i in range(0,len_cnch):
         if buf in cncharList[i][1]:
             bufIndex = cncharList[i][1].find(buf)
-            print(cncharList[i][1], len(cncharList[i][1]), bufIndex, bufIndex+len(buf))
             if (bufIndex == 0) and (bufIndex+len(buf) == len(cncharList[i][1])): #완벽히 일치
                 indexlist.append(i)
             elif (bufIndex == 0): #시작지점에 위치
@@ -38,7 +47,6 @@ def searchIndex(buf): #하나의 index검색, 반환 (한자 검색 시)
     return -1
 
 def pinyinConvert(string, num):
-    num = num-1 #성조 번호를 입력받을때 어색함을 없애기 위함
     engList = ['a','o','e','i','u','ü']
     pinyinList = {'a' : ['ā','á','ǎ','à','a'],
                   'e' : ['ē','é','ě','è','e'],
@@ -65,19 +73,57 @@ def pinyinConvert(string, num):
     if(targetIndex==-1):
         return ''
     return string[:targetIndex] + pinyinList[string[targetIndex]][num] + string[targetIndex+1:]
-        
+
+def view_cncharSelectmenu(resultList):
+    view = ui.View()
+    header = list(resultList.keys())
+    select=[]
+    options = [[],[],[],[],[]]
+    
+    for i in range(5):
+        options[i] = [SelectOption(label = cncharList[j][0],
+            description = cncharList[j][1]) 
+            for j in resultList[header[i]]]
+    for i in range(5):
+        if(len(options[i])==0):
+            select.append(select_list(f"{header[i]} : 검색 결과 없음", [SelectOption(label = ".")], True))
+        else:
+            select.append(select_list(f"{header[i]} : {len(options[i])}개", options[i]))
+
+    async def callback_1(interaction:Interaction):
+            await interaction.response.send_message(content='',file=file_cncharImage(searchIndex(select[0].values[-1])),
+                                                    embed=embed_cncharInfo(searchIndex(select[0].values[-1])))
+    async def callback_2(interaction:Interaction):
+            await interaction.response.send_message(content='',file=file_cncharImage(searchIndex(select[1].values[-1])),
+                                                    embed=embed_cncharInfo(searchIndex(select[1].values[-1])))
+    async def callback_3(interaction:Interaction):
+            await interaction.response.send_message(content='',file=file_cncharImage(searchIndex(select[2].values[-1])),
+                                                    embed=embed_cncharInfo(searchIndex(select[2].values[-1])))
+    async def callback_4(interaction:Interaction):
+            await interaction.response.send_message(content='',file=file_cncharImage(searchIndex(select[3].values[-1])),
+                                                    embed=embed_cncharInfo(searchIndex(select[3].values[-1])))
+    async def callback_none(interaction:Interaction):
+            await interaction.response.send_message(content='',file=file_cncharImage(searchIndex(select[4].values[-1])),
+                                                    embed=embed_cncharInfo(searchIndex(select[4].values[-1])))
+    select[0].callback = callback_1
+    select[1].callback = callback_2
+    select[2].callback = callback_3
+    select[3].callback = callback_4
+    select[4].callback = callback_none
+    
+    for i in range(5):
+        view.add_item(select[i])
+    return view
+
 @client.command(name="중국한자")
 async def chinachar(ctx, args):
-    print(args)
-    charDict = {}
-    string = ''
-    for i in range(1,6):
+    resultList = {}
+    for i in range(5):
         pron = pinyinConvert(args,i)
-        charDict[pron] = []
+        resultList[pron] = []
         for j in searchIndexlist(pron):
-            charDict[pron].append(cncharList[j][0])
-        string += pron + ' : ' + ' '.join(charDict[pron]) + '\n'
-    await ctx.channel.send(string)
+            resultList[pron].append(j)
+    await ctx.channel.send(view = view_cncharSelectmenu(resultList))
 
 @client.tree.command(name="중국한자", description="검색을 통해 중국 한자 정보를 출력합니다")
 @app_commands.describe(input="알고자 하는 한자를 직접 입력 / 한어병음을 영어로 입력 (j,p,x 뒤에 오지 않는 ü는 yu로 입력)")
