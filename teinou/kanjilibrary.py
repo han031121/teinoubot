@@ -1,6 +1,7 @@
 import re
 from PIL import ImageFont, ImageDraw, Image
 from os import path, makedirs
+from discord import ui
 
 enhira = []
 TEXT_PATH = "assets/teinoubot_texts/"
@@ -37,6 +38,14 @@ def kanjiImage(string):
         open(filename, "a")
         image.save(filename)
     return filename
+
+def select_list(placeholder:str, options:list, disabled:bool = False):
+    return ui.Select(
+        placeholder = placeholder,
+        min_values = 1,
+        max_values = 1,
+        options = options,
+        disabled = disabled)
 
 def iskanji(string):
     return re.fullmatch("^[㐀-䶵一-鿋豈-頻]+$",string)

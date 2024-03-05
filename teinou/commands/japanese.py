@@ -66,12 +66,6 @@ def select_empty():
         max_values = 1,
         options = [SelectOption(label = ".")],
         disabled=True)
-def select_kanjilist(placeholder, options):
-    return ui.Select(
-        placeholder = placeholder,
-        min_values = 1,
-        max_values = 1,
-        options = options)
 
 def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     page_sound = page_sound
@@ -94,11 +88,11 @@ def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean)
             for i in indexlist_mean[slicer_mean]]
 
     if len(option_sound)>0:
-        select_sound = select_kanjilist("음독 검색 결과 ("+str(page_sound)+"/"+str(totalpage_sound)+")", option_sound)
+        select_sound = select_list("음독 검색 결과 ("+str(page_sound)+"/"+str(totalpage_sound)+")", option_sound)
     else:
         select_sound = select_empty()
     if len(option_mean)>0:
-        select_mean = select_kanjilist("훈독 검색 결과 ("+str(page_mean)+"/"+str(totalpage_mean)+")", option_mean)
+        select_mean = select_list("훈독 검색 결과 ("+str(page_mean)+"/"+str(totalpage_mean)+")", option_mean)
     else:
         select_mean = select_empty()
     prev_sound = ui.Button(label="이전(음)",style=ButtonStyle.blurple)
