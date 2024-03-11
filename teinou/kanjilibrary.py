@@ -47,6 +47,11 @@ def select_list(placeholder:str, options:list, disabled:bool = False):
         options = options,
         disabled = disabled)
 
+def isincludeKanji(string):
+    for a in string:
+        if re.match("^[㐀-䶵一-鿋豈-頻]+$",a):
+            return True
+    return False
 def iskanji(string):
     return re.fullmatch("^[㐀-䶵一-鿋豈-頻]+$",string)
 def ishiragana(string):

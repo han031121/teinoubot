@@ -1,6 +1,9 @@
 from teinou.client import client
 from teinou.kanjilibrary import *
 from discord import Interaction, ui, Embed, app_commands, File, SelectOption, Color
+import requests
+import re
+from bs4 import BeautifulSoup
 TEXT_PATH = "assets/teinoubot_texts/"
 cncharList = []
 len_cnch = 0
@@ -9,6 +12,7 @@ with open(TEXT_PATH + "chinese_character_1.txt","r",encoding='UTF8') as f_chinac
     tmpList = f_chinachar.readlines()
     for i in range(len(tmpList)):
         cncharList.append(tmpList[i].split("\t")) #{한자}\t{한어병음}
+        cncharList[i].pop()
     len_cnch = len(cncharList)
 
 def file_cncharImage(index):
@@ -20,7 +24,8 @@ def embed_cncharInfo(index): #한자 하나에 대한 설명 embed 반환
     )
     embed.set_thumbnail(url=f"attachment://image.png")
     embed.add_field(name="한어병음",value=cncharList[index][1],inline=True)
-    #embed.add_field(name="뜻",value=cncharList[index][1],inline=True)
+    embed.add_field(name="뜻",value=getMeaning(cncharList[index][0]),inline=False)
+    embed.set_footer(text="Source : MDBG Chinese Dictionary")
     return embed
 
 def searchIndexlist(buf): #여러개의 index검색, list반환 (병음 검색 시)
@@ -44,7 +49,6 @@ def searchIndex(buf): #하나의 index검색, 반환 (한자 검색 시)
         if buf in cncharList[i][0]:
             return i
     return -1
-
 def pinyinConvert(string, num):
     engList = ['a','o','e','i','u','ü']
     pinyinList = {'a' : ['ā','á','ǎ','à','a'],
@@ -72,6 +76,25 @@ def pinyinConvert(string, num):
     if(targetIndex==-1):
         return string
     return string[:targetIndex] + pinyinList[string[targetIndex]][num] + string[targetIndex+1:]
+
+def getMeaning(word):
+    index = searchIndex(word)
+    if (len(cncharList[index])==3):
+         return cncharList[index][2]
+
+    try:
+        response = requests.get("https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb=c%3A"+word)
+        soup = BeautifulSoup(response.text, "html.parser")
+        meanText = soup.find("div","defs").text
+        meanList = meanText.split(" / ")
+        for i in range(len(meanList)-1,0,-1):
+             if (isincludeKanji(meanList[i]) or i>3):
+                  meanList.pop(i)
+        result = '\n'.join(meanList)
+        cncharList[index].append(result)
+        return(result)
+    except ConnectionRefusedError:
+         return("뜻을 불러올 수 없습니다")
 
 def view_cncharSelectmenu(resultList):
     view = ui.View()
