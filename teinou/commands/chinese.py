@@ -81,11 +81,14 @@ def getMeaning(word):
     if (len(cncharList[index])==3):
          return cncharList[index][2]
 
-    response = requests.get("https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb="+word)
-    soup = BeautifulSoup(response.text, "html.parser")
-    meanText = soup.find("div","defs")
-    cncharList[index].append(meanText)
-    return(meanText.text)
+    try:
+        response = requests.get("https://www.mdbg.net/chinese/dictionary?page=worddict&wdrst=0&wdqb="+word)
+        soup = BeautifulSoup(response.text, "html.parser")
+        meanText = soup.find("div","defs")
+        cncharList[index].append(meanText)
+        return(meanText.text)
+    except ConnectionRefusedError:
+         return("뜻을 불러올 수 없습니다")
 
 def view_cncharSelectmenu(resultList):
     view = ui.View()
