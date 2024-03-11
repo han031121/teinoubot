@@ -57,7 +57,7 @@ def pinyinConvert(string, num):
                   'o' : ['ō','ó','ǒ','ò','o'],
                   'u' : ['ū','ú','ǔ','ù','u'],
                   'ü' : ['ǖ','ǘ','ǚ','ǜ','ü']}
-    targetIndex = -1
+    targetIndex = -1 #성조를 붙이고자 하는 index
     i_index = string.find('i')
     u_index = string.find('u')
 
@@ -144,7 +144,9 @@ async def chinachar(interaction:Interaction, input:str):
     if input.encode().isalpha(): #알파벳일 경우
         resultList = {}
         emptyConut = 0
-        for i in range(5):
+        if (input.find("yu")>0): #yu를 ü로 대체
+            input = input.replace("yu","ü")
+        for i in range(5): #5가지 성조 붙이기
             pron = pinyinConvert(input,i)
             resultList[pron] = []
             for j in searchIndexlist(pron):

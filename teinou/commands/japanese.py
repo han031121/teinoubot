@@ -154,7 +154,7 @@ async def japanese(ctx,*args):
 '''
 
 @client.tree.command(name="일본한자", description="검색을 통해 일본 한자 정보를 출력합니다")
-@app_commands.describe(input="알고자 하는 한자를 직접 입력 / 발음을 영어로 입력")
+@app_commands.describe(input="알고자 하는 한자를 직접 입력 / 발음을 영어 혹은 히라가나로 입력")
 @app_commands.rename(input="키워드")
 async def japankanji(interaction:Interaction, input:str):
     if iskanji(input): #한자일 경우
