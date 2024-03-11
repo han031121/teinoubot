@@ -1,6 +1,6 @@
 from teinou.client import client
 from random import randrange
-from teinou.jplibrary import *
+from teinou.kanjilibrary import *
 from math import ceil
 from discord import Interaction, ui, Embed, app_commands, File, SelectOption, ButtonStyle, Color
 from discord.app_commands import Choice
@@ -59,20 +59,6 @@ def searchIndex(buf,context): #하나의 index검색, 반환
             return i
     return -1
 
-def select_empty():
-    return ui.Select(
-        placeholder = "검색 결과가 없음",
-        min_values = 1,
-        max_values = 1,
-        options = [SelectOption(label = ".")],
-        disabled=True)
-def select_kanjilist(placeholder, options):
-    return ui.Select(
-        placeholder = placeholder,
-        min_values = 1,
-        max_values = 1,
-        options = options)
-
 def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean):
     page_sound = page_sound
     page_mean = page_mean
@@ -94,13 +80,13 @@ def view_kanjiSelectmenu(indexlist_sound, indexlist_mean, page_sound, page_mean)
             for i in indexlist_mean[slicer_mean]]
 
     if len(option_sound)>0:
-        select_sound = select_kanjilist("음독 검색 결과 ("+str(page_sound)+"/"+str(totalpage_sound)+")", option_sound)
+        select_sound = select_list("음독 검색 결과 ("+str(page_sound)+"/"+str(totalpage_sound)+")", option_sound)
     else:
-        select_sound = select_empty()
+        select_sound = select_list("음독 검색 결과 없음", [SelectOption(label = ".")], True)
     if len(option_mean)>0:
-        select_mean = select_kanjilist("훈독 검색 결과 ("+str(page_mean)+"/"+str(totalpage_mean)+")", option_mean)
+        select_mean = select_list("훈독 검색 결과 ("+str(page_mean)+"/"+str(totalpage_mean)+")", option_mean)
     else:
-        select_mean = select_empty()
+        select_mean = select_list("훈독 검색 결과 없음", [SelectOption(label = ".")], True)
     prev_sound = ui.Button(label="이전(음)",style=ButtonStyle.blurple)
     next_sound = ui.Button(label="다음(음)",style=ButtonStyle.blurple)
     prev_mean = ui.Button(label="이전(훈)",style=ButtonStyle.green)
