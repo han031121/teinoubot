@@ -3,7 +3,7 @@
 <p align="center">
 <img width=200 src="./assets/splash.png">
 <br>
-teinoubot / 저능아봇 / 低能ボット
+teinoubot / 저능봇 / 低能ボット
 </p>
 
 
