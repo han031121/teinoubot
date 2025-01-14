@@ -4,6 +4,7 @@ from teinou.kanjilibrary import *
 from math import ceil
 from discord import Interaction, ui, Embed, app_commands, File, SelectOption, ButtonStyle, Color
 from discord.app_commands import Choice
+import re
 
 TEXT_PATH = "assets/teinoubot_texts/"
 jpList = []; jpkList = []
@@ -47,10 +48,10 @@ def embed_kanjiInfo(index): #한자 하나에 대한 설명 embed 반환
     embed.add_field(name="난이도",value=jpkDiff[jpkList[index][4]],inline=True)
     return embed
 
-def searchIndexlist(buf,context): #여러개의 index검색, list반환
+def searchIndexlist(pat,context): #여러개의 index검색, list반환
     indexlist = []
     for i in range(len_jpk-1,-1,-1):
-        if buf in jpkList[i][context]:
+        if re.fullmatch(pat,jpkList[i][context]):
             indexlist.append(i)
     return indexlist
 def searchIndex(buf,context): #하나의 index검색, 반환
@@ -167,7 +168,7 @@ async def japankanji(interaction:Interaction, input:str):
     elif ishangeul(input): #한글일 경우
         return await interaction.response.send_message(embed=Embed(description="이건 한글입니다."),
                                                         ephemeral=True)
-    else: #히라가나,영어, 기타 올바르지 않은 입력일 경우
+    else: #히라가나,영어, 기타 입력일 경우
         if input.encode().isalpha():
             string = engtohira(input)
             if string == -1:

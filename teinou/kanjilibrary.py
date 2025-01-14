@@ -47,6 +47,8 @@ def select_list(placeholder:str, options:list, disabled:bool = False):
         options = options,
         disabled = disabled)
 
+def isquoted(string):
+    return re.match("^\'.*\'$",string)
 def isincludeKanji(string):
     return re.search("[㐀-䶵一-鿋豈-頻]",string)
 def iskanji(string):
